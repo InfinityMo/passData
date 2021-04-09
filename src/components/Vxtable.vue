@@ -18,6 +18,7 @@
                           :key="col.fieldName"
                           :field="col.fieldName"
                           :title="col.title"
+                          :align="col.align"
                           :fixed="col.fixed"
                           :width="col.width">
         </vxe-table-column>
@@ -28,6 +29,7 @@
                             :key="colChild.fieldName"
                             :field="colChild.fieldName"
                             :title="colChild.title"
+                            :align="col.align"
                             :width="colChild.width">
           </vxe-table-column>
         </vxe-table-colgroup>
@@ -58,11 +60,13 @@ export default {
   },
   methods: {
     setColumn () {
+      const leftKey = ['brand', 'level1', 'level2', 'level3']
       column2.forEach(item => {
         this.columns.push({
           fieldName: item.key,
           title: item.value,
           fixed: item.key === 'brand' ? 'left' : '',
+          align: leftKey.includes(item.key) ? 'left' : 'right',
           width: '155',
           children: item.children ? this.dealChild(item.children) : null
         })

@@ -22,7 +22,7 @@
             <el-col :span="8">
               <el-form-item label="日期选择："
                             prop="dataType">
-                <el-date-picker v-model="searchForm.dateTime "
+                <el-date-picker v-model="searchForm.dateTime"
                                 :editable="false"
                                 :clearable="false"
                                 value-format="yyyy-MM-dd"
@@ -146,8 +146,8 @@ import { scrollTo } from '@/common/utils/funcStore'
 import watermark from '@/common/utils/watermark'
 import { timeTypeArr } from '../index/data'
 // import Table from '../index/table'
-// import Vtable from '@/components/Vtable'
-import Vtable from '@/components/Vxtable'
+import Vtable from '@/components/Vtable'
+
 import { searchForm } from './formData'
 export default {
   mixins: [tableMixin],

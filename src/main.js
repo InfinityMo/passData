@@ -6,8 +6,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/theme/index.css'
 import '@/common/styles/reset.less'
-import '@/common/styles/common.less'
+
 import '@/common/styles/el-reset.less'
+import '@/common/styles/vxe-reset.less'
 import '@/common/styles/adapt.less'
 import '@/common/styles/icon-set.less'
 // import '@/common/utils/permission'
@@ -20,6 +21,7 @@ import debounce from '@/common/utils/debounce'
 import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
+import '@/common/styles/common.less'
 // 挂载请求
 Vue.prototype.$request = axios
 // 挂载防抖函数

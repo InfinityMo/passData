@@ -1,50 +1,44 @@
 <template>
   <div>
-    <!--  -->
     <vxe-table border
                show-overflow
                row-key
                show-header-overflow
                highlight-hover-row
                highlight-current-row
-               :auto-resize="true"
                :merge-cells="mergeCells"
                :footer-method="tableSummaries"
-               keep-source
                show-footer
-               @cell-dblclick="cellDbClick"
-               :edit-config="{trigger: 'dblclick', mode: 'cell', showStatus: true,showIcon:false}"
+               :scroll-x="{enabled: false}"
                ref="xTable"
                height="600">
-      <vxe-table-column v-for="col in columns"
-                        :key="col.fieldName"
-                        :field="col.fieldName"
-                        :title="col.title"
-                        :fixed="col.fixed"
-                        :align="col.align"
-                        :edit-render="{ autofocus: '.vxe-input--inner' }"
-                        :width="col.width">
-        <template v-slot:edit="{ row }">
-          <el-input v-if="col.edit"
-                    placeholder="请输入"
-                    v-focus
-                    maxlength='13'
-                    @input="tableCellInput($event,row)"
-                    @blur="tableCellBlur(row)"
-                    v-model="tableCellEditVal">
-          </el-input>
-          <div v-else
-               class="ell ">
-            {{row[col.fieldName]}}
-          </div>
-        </template>
-      </vxe-table-column>
+      <template v-for="col in columns">
+        <vxe-table-column v-if="!col.children"
+                          :key="col.fieldName"
+                          :field="col.fieldName"
+                          :title="col.title"
+                          :align="col.align"
+                          :fixed="col.fixed"
+                          :width="col.width">
+        </vxe-table-column>
+        <vxe-table-colgroup v-else
+                            :key="col.fieldName"
+                            :title="col.title">
+          <vxe-table-column v-for="colChild in col.children"
+                            :key="colChild.fieldName"
+                            :field="colChild.fieldName"
+                            :title="colChild.title"
+                            :align="col.align"
+                            :width="colChild.width">
+          </vxe-table-column>
+        </vxe-table-colgroup>
+      </template>
     </vxe-table>
   </div>
 </template>
 <script>
 import {
-  column, table,
+  column3, table3,
   formatRowspanAndColspan
 } from './data'
 export default {
@@ -59,43 +53,47 @@ export default {
       currentEditCellKey: ''
     }
   },
-  watch: {
-    tableCellEditVal (val, oldval) {
-      this.cellInputWatch = val
-    }
-  },
   created () {
     this.setColumn()
     this.setTableData()
   },
   methods: {
     setColumn () {
-      const leftKey = ['brand', 'product']
-      column.forEach(item => {
-        let width = '150'
-        if (item.key === 'brand') {
-          width = '140'
-        }
-        if (item.key === 'product') {
-          width = '309'
-        }
+      const leftKey = ['brand', 'level1', 'level2', 'level3']
+      column3.forEach(item => {
         this.columns.push({
           fieldName: item.key,
           title: item.value,
           fixed: item.key === 'brand' ? 'left' : '',
           align: leftKey.includes(item.key) ? 'left' : 'right',
-          edit: item.edit,
-          width: width
+          width: '155',
+          children: item.children ? this.dealChild(item.children) : null
         })
       })
+      // console.log(this.columns)
+    },
+    dealChild (item) {
+      const arr = []
+      item.forEach(item => {
+        arr.push({
+          fieldName: item.key,
+          title: item.value,
+          fixed: '',
+          width: '155'
+        })
+      })
+      return arr
     },
     setTableData () {
-      table.forEach(item => {
+      table3.forEach(item => {
         this.tableData.push(item)
       })
-
-      const formatRow = formatRowspanAndColspan(this.tableData, 'brandId')
-      this.formatMerge(formatRow, 0, 1)
+      const fromatIdArr = ['brandId', 'level1Id', 'level2Id']
+      fromatIdArr.forEach((item, index) => {
+        const formatRow = formatRowspanAndColspan(this.tableData, item)
+        this.formatMerge(formatRow, index, 1)
+      })
+      // eslint-disable-next-line no-unused-vars
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
       })
@@ -142,10 +140,9 @@ export default {
       return [sums]
     },
     cellDbClick (row) {
-      if (row.column.property === 'product') {
-        return false
-      }
-      console.log(row.column.property)
+      // this.tableData.forEach(item => {
+      //   item.cellEdit = 0
+      // })
       row.data[row.$rowIndex].cellEdit = 1
       const cellVal = row.data[row.$rowIndex][row.column.property].replace(/,/g, '')
       if (Number(cellVal)) {
