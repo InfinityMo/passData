@@ -145,7 +145,6 @@ export default {
       if (row.column.property === 'product') {
         return false
       }
-      console.log(row.column.property)
       row.data[row.$rowIndex].cellEdit = 1
       const cellVal = row.data[row.$rowIndex][row.column.property].replace(/,/g, '')
       if (Number(cellVal)) {
@@ -158,9 +157,7 @@ export default {
       this.currentEditCellKey = row.column.property
     },
     tableCellBlur (row) {
-      // debugger
-      // console.log(1)
-      // row.cellEdit = 0
+      this.$refs.xTable.clearActived()
     },
     tableCellInput (val, row) {
       // const reg = /^\d+(\.\d{0,2})?$/

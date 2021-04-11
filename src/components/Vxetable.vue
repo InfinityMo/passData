@@ -93,7 +93,7 @@ export default {
         const formatRow = formatRowspanAndColspan(this.tableData, item)
         this.formatMerge(formatRow, index, 1)
       })
-      // eslint-disable-next-line no-unused-vars
+      console.log(this.mergeCells)
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
       })
