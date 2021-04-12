@@ -60,8 +60,8 @@ instance.interceptors.request.use(
     config.cancelToken = source.token // 全局添加cancelToken
     // 服务器全局检索字段
     config.headers.trackId = store.state.trackId || ''
-    config.headers.permissionsCode = store.state.permissionsCode || ''
-    config.headers.user = store.state.userData.staffId || ''
+    // config.headers.permissionsCode = store.state.permissionsCode || ''
+    // config.headers.user = store.state.userData.staffId || ''
     // removePending(config)
     // 添加请求cancel
     // config.cancelToken = new axios.CancelToken((cancel) => {

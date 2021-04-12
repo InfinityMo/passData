@@ -233,9 +233,9 @@ export default {
     tableRender (flag) {
       this.$nextTick(() => {
         this.$store.commit('SETSPINNING', false)
-        if (this.searchClick && flag) {
+        if (flag) {
           setTimeout(() => {
-            scrollTo(120)
+            scrollTo(screen.height < 1080 ? 140 : 120)
           }, 500)
         }
       })

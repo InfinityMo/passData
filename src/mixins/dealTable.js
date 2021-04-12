@@ -102,7 +102,7 @@ const mixins = {
     _getSelectData (type) {
       const option = []
       return new Promise((resolve, reject) => {
-        this.$request.post('/dropdownlist', { dropDownListType: type }).then(res => {
+        this.$request.post('/dropdownlist', { type: type }).then(res => {
           if (res) {
             const dropData = res.data || []
             dropData.map((i) => {
@@ -118,20 +118,20 @@ const mixins = {
         })
       })
     },
-    _getCascader (type) {
-      const option = []
+    _getCascader (level, type) {
+      // const option = []
       return new Promise((resolve, reject) => {
-        this.$request.post('/dropdownlist', { dropDownListType: type }).then(res => {
+        this.$request.post('/channeldropdownlist', { level: level, type: type }).then(res => {
           if (res) {
             const dropData = res.data || []
-            dropData.map((i) => {
-              option.push({
-                value: i.value,
-                label: i.name,
-                children: i.children && i.children.length > 0 ? this._setChild(i.children) : []
-              })
-            })
-            resolve(option)
+            // dropData.map((i) => {
+            //   option.push({
+            //     value: i.value,
+            //     label: i.name,
+            //     children: i.children && i.children.length > 0 ? this._setChild(i.children) : []
+            //   })
+            // })
+            resolve(dropData)
           }
         }).catch(err => {
           reject(err)

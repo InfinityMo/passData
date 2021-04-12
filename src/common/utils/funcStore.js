@@ -39,7 +39,7 @@ export function scrollTo (distance) {
     //   document.documentElement.scrollTop += speed
     // }
     // 垃圾ie
-    if (top >= distance - 4 || isScrollToBottom()) {
+    if (top >= distance || isScrollToBottom()) {
       clearInterval(timer)
     }
   }, 30)

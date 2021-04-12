@@ -26,12 +26,19 @@
               更多操作<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>数据导入</el-dropdown-item>
-              <el-dropdown-item>下载模板</el-dropdown-item>
+              <el-dropdown-item>
+                <el-upload accept=".xlsx,.xls"
+                           action=""
+                           :before-upload="beforeUpload"
+                           :file-list="fileList"
+                           :show-file-list="false">
+                  <el-button plain
+                             class="import-btn"><i class="import-icon"></i>导入数据</el-button>
+                </el-upload>
+              </el-dropdown-item>
               <el-dropdown-item @click="viewJournal">查看日志</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-
           <el-popover placement="bottom"
                       trigger="click"
                       popper-class="user-popover">
@@ -114,6 +121,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Base64 } from 'js-base64'
+import axios from 'axios'
 export default {
   data () {
     var checkPwd = (rule, value, callback) => {
@@ -126,7 +134,7 @@ export default {
       }
     }
     return {
-      tabActive: 'passageWay',
+      tabActive: '',
       journalShow: false,
       pwdShow: false,
       PAGING: {
@@ -183,11 +191,16 @@ export default {
           { required: true, message: '请输入确认密码', trigger: 'blur' },
           { validator: checkPwd, trigger: 'blur' }
         ]
-      }
+      },
+      fileList: [],
+      fileType: ['xlsx', 'xls']
     }
   },
   computed: {
     ...mapGetters({ userData: 'getUserData' })
+  },
+  created () {
+    this.tabActive = this.$route.name
   },
   methods: {
     tabClick (tab, event) {
@@ -246,6 +259,82 @@ export default {
       // 跳转登录
       sessionStorage.clear()
       this.$router.go(0)
+    },
+    beforeUpload (file) {
+      const { name } = file
+      if (!this.fileType.includes(name.split('.')[name.split.length - 1])) {
+        this.$message.warning('文件格式不正确，请检查文件')
+        return false
+      }
+      const fileSize = file.size / 1024 / 1024
+      if (fileSize > 5) {
+        this.$message.warning('文件上传过大,请检查文件')
+        return false
+      }
+      this.fileList = [...this.fileList, file]
+      this.uploadHandel()
+    },
+    // 上传
+    uploadHandel () {
+      const { fileList } = this
+      const formData = new FormData()
+      fileList.forEach(file => {
+        formData.append('file', file)
+      })
+      const submitUrl = `${process.env.VUE_APP_API}/import`
+      this.$store.commit('SETSPINNING', true)
+      axios.request({
+        url: submitUrl,
+        method: 'post',
+        data: formData,
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          trackId: this.$store.state.trackId || ''
+          // permissionsCode: this.$store.state.permissionsCode || '',
+          // user: this.$store.state.userData.staffId || ''
+        }
+      }).then(res => {
+        this.$store.commit('SETSPINNING', false)
+        this.fileList = []
+        if (res.data.errorCode === 1) {
+          this.$message.success('导入成功')
+          const msgArr = res.data.data || []
+          if (msgArr && msgArr.length > 0) {
+            let tipMsg = ''
+            msgArr.forEach(i => {
+              tipMsg += `<p><span class="tool">${i.tool}</span><span class="date">${i.date}</span>数据有误</p>`
+            })
+            tipMsg = `<div class="import-tip-content">${tipMsg}</div>`
+            setTimeout(() => {
+              this.$alert(tipMsg, '以下数据有误，未能成功导入', {
+                customClass: 'import-tip',
+                dangerouslyUseHTMLString: true
+              })
+            }, 500)
+          }
+        } else if (res.data.errorCode === -1) {
+          this.$message.error('文件上传失败')
+        } else if (res.data.errorCode === 103) {
+          this.$message.error('文件名称不正确，请检查文件')
+        } else if (res.data.errorCode === 104) {
+          this.$message.error('文件内容不正确，请检查文件')
+        } else if (res.data.errorCode === 1003) {
+          this.$message.warning('用户身份信息过期，请重新登录')
+          setTimeout(() => {
+            sessionStorage.removeItem('userData')
+            this.$store.dispatch('resetUSerInfo')
+            // 跳转登录
+            sessionStorage.clear()
+            this.$router.go(0)
+          }, 1500)
+        } else if (res.data.errorCode === 1004) {
+          this.$message.warning('上传权限不足，请联系管理员')
+        }
+      }).catch(res => {
+        this.$message.error('上传失败，请重新上传')
+        this.$store.commit('SETSPINNING', false)
+      })
     }
   }
 }

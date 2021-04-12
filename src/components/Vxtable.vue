@@ -12,7 +12,7 @@
                show-footer
                :scroll-x="{enabled: false}"
                ref="xTable"
-               height="600">
+               :max-height="calcHeight">
       <template v-for="col in columns">
         <vxe-table-column v-if="!col.children"
                           :key="col.fieldName"
@@ -52,6 +52,14 @@ export default {
       tableCellEditVal: '',
       cellInputWatch: '',
       currentEditCellKey: ''
+    }
+  },
+  computed: {
+    calcHeight () {
+      let height = 0
+      const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
+      height = clientHeight - 197
+      return height
     }
   },
   created () {
@@ -97,6 +105,7 @@ export default {
       // eslint-disable-next-line no-unused-vars
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
+        this.$emit('tableRender', true)
       })
       //
     },

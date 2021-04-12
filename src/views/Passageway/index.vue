@@ -9,9 +9,22 @@
                    ref="searchForm"
                    label-width="90px">
             <el-col :span="8">
+              <el-form-item label="通道等级：">
+                <el-select placeholder="请选择通道等级"
+                           popper-class="reset-select"
+                           v-model="searchForm.level">
+                  <el-option v-for="item in passageWayOption"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
               <el-form-item label="通道选择：">
                 <el-cascader placeholder="请选择通道"
-                             v-model="searchForm.channelId"
+                             v-model="searchForm.channelList"
                              :options="channelOptions"
                              :props="{ multiple: true }"
                              collapse-tags
@@ -20,8 +33,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="日期选择："
-                            prop="dataType">
+              <el-form-item label="日期选择：">
                 <el-date-picker v-model="searchForm.dateTime"
                                 :editable="false"
                                 :clearable="false"
@@ -37,13 +49,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="品牌选择："
-                            prop="dataType">
+              <el-form-item label="品牌选择：">
                 <el-select placeholder="请选择品牌"
                            popper-class="reset-select"
-                           @change="timeTypeChange"
-                           v-model="searchForm.timeType">
-                  <el-option v-for="item in timeTypeArr"
+                           v-model="searchForm.brandList">
+                  <el-option v-for="item in brandOptions"
                              :key="item.value"
                              :label="item.label"
                              :value="item.value">
@@ -52,13 +62,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="商品选择："
-                            prop="dataType">
+              <el-form-item label="商品选择：">
                 <el-select placeholder="请选择商品"
                            popper-class="reset-select"
-                           @change="timeTypeChange"
-                           v-model="searchForm.timeType">
-                  <el-option v-for="item in timeTypeArr"
+                           v-model="searchForm.itemList">
+                  <el-option v-for="item in productOptions"
                              :key="item.value"
                              :label="item.label"
                              :value="item.value">
@@ -67,13 +75,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="数据类型："
-                            prop="dataType">
+              <el-form-item label="数据类型：">
                 <el-select placeholder="请选择数据类型"
                            popper-class="reset-select"
-                           @change="timeTypeChange"
-                           v-model="searchForm.timeType">
-                  <el-option v-for="item in timeTypeArr"
+                           v-model="searchForm.dataType">
+                  <el-option v-for="item in dataTypeOption"
                              :key="item.value"
                              :label="item.label"
                              :value="item.value">
@@ -82,9 +88,32 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="商品名称/Id："
-                            prop="dataType">
-                <el-input placeholder="请输入商品名称或Id"></el-input>
+              <el-form-item label="链接名称/Id：">
+                <!-- <el-select v-model="searchForm.linkList"
+                           filterable
+                           placeholder="请输入链接名称或Id">
+                  <el-option v-for="item in restaurants"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select> -->
+                <el-select v-model="searchForm.linkList"
+                           filterable
+                           remote
+                           placeholder="请输入链接名称或Id"
+                           :remote-method="remoteMethod">
+                  <el-option v-for="item in linkSearchOption"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+                <!-- <el-autocomplete v-model="searchForm.linkList"
+                                 :trigger-on-focus="false"
+                                 :fetch-suggestions="querySearch"
+                                 placeholder="请输入链接名称或Id">
+                                 </el-autocomplete> -->
               </el-form-item>
             </el-col>
             <el-col :span="8"
@@ -112,8 +141,9 @@
           <!-- <Table :form="submitForm"
                  @monthDialog="openMonthDialog"
                  @tableRender="tableRender" /> -->
-          <!-- <Table /> -->
-          <Vtable />
+          <!-- <Table  /> -->
+          <Vtable @tableRender="tableRender"
+                  :form="submitForm" />
         </div>
       </div>
     </div>
@@ -141,14 +171,14 @@
 import axios from 'axios'
 import { mapGetters, mapMutations } from 'vuex'
 import tableMixin from '@/mixins/dealTable'
-import { monthSpliceDay } from '@/common/utils/timeCalc'
+import { monthSpliceDay, getLastSevenDay } from '@/common/utils/timeCalc'
 import { scrollTo } from '@/common/utils/funcStore'
 import watermark from '@/common/utils/watermark'
 import { timeTypeArr } from '../index/data'
 // import Table from '../index/table'
 import Vtable from '@/components/Vtable'
-
-import { searchForm } from './formData'
+// import {getLastSevenDay} from '@/common/utils/timeCalc.js'
+import { searchForm, passageWayOption, dataTypeOption } from './formData'
 export default {
   mixins: [tableMixin],
   components: {
@@ -161,11 +191,15 @@ export default {
       searchForm: JSON.parse(JSON.stringify(searchForm)),
       timeSection: [], // 时间范围
       submitForm: {
-        timeType: 1,
-        startDate: '',
-        endDate: '',
-        shop: '',
-        dataType: []
+        level: '3', // 通道等级
+        channelList: [], // 通道
+        start: '',
+        end: '',
+        dateTime: getLastSevenDay(), // 日期
+        brandList: [], // 品牌
+        itemList: [], // 单品
+        dataType: '1', // 数据类型
+        linkList: '' // 商品
       },
       monthForm: {
         timeType: '',
@@ -176,7 +210,6 @@ export default {
       },
       timeTypeArr: timeTypeArr,
       shopArr: [],
-      channelOptions: [],
       monthDataShow: false,
       randomKey: 1,
       isShowTable: false,
@@ -187,7 +220,15 @@ export default {
       cacheMonth: '',
       cacheTimeSection: [],
       monthRangeRadomLey: 1,
-      confirmCover: false
+      confirmCover: false,
+      // 通道
+      passageWayOption: passageWayOption,
+      dataTypeOption: dataTypeOption,
+      channelOptions: [],
+      brandOptions: [],
+      productOptions: [],
+      linkSearchOption: [],
+      restaurants: []
     }
   },
   watch: {
@@ -226,6 +267,8 @@ export default {
     // }
   },
   created () {
+    this.getSelectData()
+    this.searchForm.dateTime = getLastSevenDay()
     // this.getSelectData()
     // this.timeTypeChange(1)
   },
@@ -237,95 +280,70 @@ export default {
   },
   methods: {
     ...mapMutations({ SAVESHOPID: 'SAVESHOPID', SAVESHOPDATA: 'SAVESHOPDATA' }),
-
     getSelectData () {
-      Promise.all([this._getSelectData(1), this._getCascader(2)]).then(res => {
-        this.shopArr = res[0]
+      // 0品牌 1单品 2链接
+      // , this._getCascader(this.searchForm.level, 3)
+      Promise.all([this._getSelectData(0), this._getSelectData(1), this._getSelectData(2), this._getCascader(this.searchForm.level, 3)]).then(res => {
+        this.brandOptions = res[0]
+        this.productOptions = res[1]
+        this.restaurants = res[2]
+        this.channelOptions = res[3]
+        // this.shopArr = res[0]
         // 缓存当前的所有店铺信息
-        this.SAVESHOPDATA(this.shopArr)
-        this.searchForm.shop = this.shopArr[0].value || ''
-        this.submitForm.shop = this.shopArr[0].value || ''
-        this.channelOptions = res[1]
-        this.extendOptions[0].children.map(i => {
-          this.searchForm.dataType.push([this.extendOptions[0].value, i.value])
-        })
-        const dataTypeArr = []
-        this.searchForm.dataType.map(i => {
-          dataTypeArr.push(i[1] || '')
-        })
-        this.submitForm.dataType = dataTypeArr.join()
-        this.submitForm.startDate = this.timeSection[0]
-        this.submitForm.endDate = this.timeSection[1]
-        this.isShowTable = true
+        // this.SAVESHOPDATA(this.shopArr)
+        // this.searchForm.shop = this.shopArr[0].value || ''
+        // this.submitForm.shop = this.shopArr[0].value || ''
+        // this.channelOptions = res[1]
+        // this.extendOptions[0].children.map(i => {
+        //   this.searchForm.dataType.push([this.extendOptions[0].value, i.value])
+        // })
+        // const dataTypeArr = []
+        // this.searchForm.dataType.map(i => {
+        //   dataTypeArr.push(i[1] || '')
+        // })
+        // this.submitForm.dataType = dataTypeArr.join()
+        // this.submitForm.startDate = this.timeSection[0]
+        // this.submitForm.endDate = this.timeSection[1]
+        // this.isShowTable = true
       })
     },
     searchHandle () {
-      this.searchClick = true
-      const dataTypeArr = []
-      this.searchForm.dataType.map(i => {
-        dataTypeArr.push(i[1] || '')
-      })
-      this.submitForm = Object.assign({}, {
-        timeType: this.searchForm.timeType,
-        startDate: this.timeSection[0] || this.fromatMonth()[0],
-        endDate: this.timeSection[1] || this.fromatMonth()[1],
-        shop: this.searchForm.shop,
-        dataType: dataTypeArr.join() || ''
-      })
-      if (this.submitForm.timeType === 7) {
-        this.submitForm.startDate = monthSpliceDay(this.submitForm.startDate)[0]
-        this.submitForm.endDate = monthSpliceDay(this.submitForm.endDate)[1]
-      }
-      this.cacheTimeSection = [...this.timeSection]
-      this.cacheMonth = this.searchForm.month || ''
+      debugger
+      this.submitForm = { ...this.searchForm }
     },
     tableRender (flag) {
       this.$nextTick(() => {
         this.$store.commit('SETSPINNING', false)
-        if (this.searchClick && flag) {
+        if (flag) {
           setTimeout(() => {
-            scrollTo(120)
+            // const top = document.body.scrollTop || document.documentElement.scrollTop
+            scrollTo(screen.height < 1080 ? 140 : 120)
           }, 500)
         }
       })
     },
-    confirmCoverDialog (flag) {
-      this.confirmCover = flag
-    },
-    dialogTableRender (flag) {
-      if (flag) {
-        this.$nextTick(() => {
-          this.$store.commit('SETSPINNING', false)
+    remoteMethod (query) {
+      if (query !== '') {
+        // debugger
+        this.linkSearchOption = this.restaurants.filter(item => {
+          return item.label.toLowerCase().indexOf(query.toLowerCase()) >= 0
         })
+      } else {
+        this.linkSearchOption = []
       }
     },
-    openMonthDialog (columnKey, columnValue) {
-      this.monthDialogTitle = columnValue
-      const monthKey = `${columnKey.substr(3, 4)}-${columnKey.substr(7)}`
-      const startDate = monthSpliceDay(monthKey)[0]
-      const endDate = monthSpliceDay(monthKey)[1]
-      this.monthForm = { ...this.submitForm, timeType: 3, startDate: startDate, endDate: endDate }
-      this.monthDataShow = true
-    },
-    beforeUpload (file) {
-      const { name } = file
-      if (!this.fileType.includes(name.split('.')[name.split.length - 1])) {
-        this.$message.warning('文件格式不正确，请检查文件')
-        return false
-      }
-      const fileSize = file.size / 1024 / 1024
-      if (fileSize > 5) {
-        this.$message.warning('文件上传过大,请检查文件')
-        return false
-      }
-      this.fileList = [...this.fileList, file]
-      this.uploadHandel()
-    },
-    // 下载模板
-    downMold () {
-      const src = `${process.env.VUE_APP_API}/mold?user=${this.userData.staffId || ''}&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}`
-      location.href = src
-    },
+    // querySearch (queryString, cb) {
+    //   const restaurants = this.restaurants
+    //   const results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+    //   debugger
+    //   // 调用 callback 返回建议列表的数据
+    //   cb(results[0].la)
+    // },
+    // createFilter (queryString) {
+    //   return (restaurant) => {
+    //     return (restaurant.label.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)
+    //   }
+    // },
     // 下载报表
     downTable () {
       const dataTypeArr = []

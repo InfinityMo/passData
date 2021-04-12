@@ -1,7 +1,6 @@
 <template>
   <div>
-    <!--  -->
-    <vxe-table border
+    <!-- <vxe-table border
                show-overflow
                row-key
                show-header-overflow
@@ -15,7 +14,7 @@
                @cell-dblclick="cellDbClick"
                :edit-config="{trigger: 'dblclick', mode: 'cell', showStatus: true,showIcon:false}"
                ref="xTable"
-               height="600">
+               :max-height="calcHeight()">
       <vxe-table-column v-for="col in columns"
                         :key="col.fieldName"
                         :field="col.fieldName"
@@ -44,15 +43,40 @@
           </div>
         </template>
       </vxe-table-column>
+    </vxe-table> -->
+    <vxe-table border
+               show-overflow
+               row-key
+               show-header-overflow
+               highlight-hover-row
+               highlight-current-row
+               :auto-resize="true"
+               :merge-cells="mergeCells"
+               :footer-method="tableSummaries"
+               keep-source
+               show-footer
+               ref="xTable"
+               :max-height="calcHeight()">
+      <vxe-table-column v-for="col in columns"
+                        :key="col.fieldName"
+                        :field="col.fieldName"
+                        :title="col.title"
+                        :fixed="col.fixed"
+                        :align="col.align"
+                        :width="col.width">
+      </vxe-table-column>
     </vxe-table>
   </div>
 </template>
 <script>
-import {
-  column, table,
-  formatRowspanAndColspan
-} from './data'
+import { formatRowspanAndColspan } from './data'
 export default {
+  props: {
+    form: {
+      type: Object,
+      default: () => { }
+    }
+  },
   data () {
     return {
       columns: [],
@@ -64,24 +88,87 @@ export default {
       currentEditCellKey: ''
     }
   },
+  computed: {
+    // calcHeight () {
+    //   let height = 0
+    //   const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
+    //   height = clientHeight - 197
+    //   return height
+    // }
+  },
   watch: {
     tableCellEditVal (val, oldval) {
       this.cellInputWatch = val
+    },
+    form: {
+      handler (val, oldval) {
+        this.getColumns().then(res => {
+          if (res) {
+            this.getTableData()
+          }
+        })
+      },
+      deep: true
     }
   },
   created () {
-    this.setColumn()
-    this.setTableData()
+    this.getColumns().then(res => {
+      if (res) {
+        this.getTableData()
+      }
+    })
+    // console.log(this.form)
+    // this.setColumn()
+    // this.setTableData()
+  },
+  mounted () {
+    // 当前窗口变化
+    window.onresize = () => {
+      this.calcHeight()
+      this.$nextTick(() => {
+        this.$refs.xTable.recalculate()
+        this.$emit('tableRender', true)
+      })
+    }
   },
   methods: {
-    setColumn () {
-      const leftKey = ['brand', 'product']
+    calcHeight () {
+      let height = 0
+      const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
+      height = clientHeight - 197
+      return height
+    },
+    getColumns () {
+      this.columns = []
+      return new Promise((resolve, reject) => {
+        this.$store.commit('SETSPINNING', true)
+        const submitform = {
+          ...this.form,
+          brandList: this.form.brandList ? this.form.brandList.join(',') : '',
+          channelList: this.form.channelList ? this.form.channelList.join(',') : '',
+          itemList: this.form.itemList ? this.form.itemList.join(',') : '',
+          start: this.form.dateTime[0],
+          end: this.form.dateTime[1]
+        }
+        delete submitform.dateTime
+        this.$request.post('/channelColumn', submitform, true).then(res => {
+          if (res) {
+            const resData = res.data || []
+            this.setColumn(resData)
+            this.$store.commit('SETSPINNING', false)
+            resolve(true)
+          }
+        })
+      })
+    },
+    setColumn (column) {
+      const leftKey = ['brand', 'itemList']
       column.forEach(item => {
         let width = '150'
         if (item.key === 'brand') {
           width = '140'
         }
-        if (item.key === 'product') {
+        if (item.key === 'itemList') {
           width = '309'
         }
         this.columns.push({
@@ -94,14 +181,40 @@ export default {
         })
       })
     },
-    setTableData () {
-      table.forEach(item => {
+    getTableData () {
+      this.tableData = []
+      this.$store.commit('SETSPINNING', true)
+
+      const submitform = {
+        ...this.form,
+        brandList: this.form.brandList ? this.form.brandList.join(',') : '',
+        channelList: this.form.channelList ? this.form.channelList.join(',') : '',
+        itemList: this.form.itemList ? this.form.itemList.join(',') : '',
+        start: this.form.dateTime[0],
+        end: this.form.dateTime[1]
+      }
+      delete submitform.dateTime
+      this.$request.post('/channelList', submitform, true).then(res => {
+        const resultData = res.data || []
+        this.setTableData(resultData)
+        //  通知父组件表格dom已渲染完成
+        // this.$nextTick(() => {
+        //   this.$emit('tableRender', true)
+        // })
+      })
+    },
+    setTableData (resultData) {
+      resultData.forEach(item => {
         this.tableData.push(item)
       })
       const formatRow = formatRowspanAndColspan(this.tableData, 'brandId')
       this.formatMerge(formatRow, 0, 1)
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
+        this.$emit('tableRender', true)
+        //   this.$nextTick(() => {
+
+        // })
       })
       //
     },
@@ -146,7 +259,7 @@ export default {
       return [sums]
     },
     cellDbClick (row) {
-      if (row.column.property === 'product' || row.column.property === 'brand') {
+      if (row.column.property === 'itemList' || row.column.property === 'brand') {
         this.$refs.xTable.clearActived()
         return false
       }

@@ -12,19 +12,19 @@ const routes = [
   },
   {
     path: '/passageway',
-    name: 'Passageway',
+    name: 'passageWay',
     meta: { title: '通道分析', keepAlive: true, isShowHead: true },
     component: () => import('@/views/Passageway/index.vue')
   },
   {
     path: '/brand',
-    name: 'Brand',
+    name: 'brand',
     meta: { title: '品牌分析', keepAlive: true, isShowHead: true },
     component: () => import('@/views/Brand/index.vue')
   },
   {
     path: '/commodity',
-    name: 'Commodity',
+    name: 'commodity',
     meta: { title: '商品分析', keepAlive: true, isShowHead: true },
     component: () => import('@/views/commodity/index.vue')
   },
