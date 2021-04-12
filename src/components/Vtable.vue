@@ -34,8 +34,13 @@
                     v-model="tableCellEditVal">
           </el-input>
           <div v-else
-               class="ell ">
-            {{row[col.fieldName]}}
+               class="ell">
+            <el-tooltip class="item"
+                        effect="dark"
+                        :content="row[col.fieldName]"
+                        placement="top">
+              {{row[col.fieldName]}}
+            </el-tooltip>
           </div>
         </template>
       </vxe-table-column>
@@ -93,7 +98,6 @@ export default {
       table.forEach(item => {
         this.tableData.push(item)
       })
-
       const formatRow = formatRowspanAndColspan(this.tableData, 'brandId')
       this.formatMerge(formatRow, 0, 1)
       this.$nextTick(() => {
@@ -142,7 +146,8 @@ export default {
       return [sums]
     },
     cellDbClick (row) {
-      if (row.column.property === 'product') {
+      if (row.column.property === 'product' || row.column.property === 'brand') {
+        this.$refs.xTable.clearActived()
         return false
       }
       row.data[row.$rowIndex].cellEdit = 1
@@ -155,6 +160,9 @@ export default {
         this.tableCellOrginVal = ''
       }
       this.currentEditCellKey = row.column.property
+    },
+    cellDblClick () {
+      this.$refs.xTable.clearActived()
     },
     tableCellBlur (row) {
       this.$refs.xTable.clearActived()

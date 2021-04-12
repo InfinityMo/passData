@@ -413,5 +413,5 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "~@/common/styles/page-table";
-@import "./index";
+@import "~@/common/styles/common-page";
 </style>

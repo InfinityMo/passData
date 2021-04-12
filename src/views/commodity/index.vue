@@ -11,7 +11,7 @@
             <el-col :span="8">
               <el-form-item label="产品选择："
                             prop="dataType">
-                <el-select placeholder="请选择产品 "
+                <el-select placeholder="请选择产品"
                            popper-class="reset-select"
                            @change="timeTypeChange"
                            v-model="searchForm.timeType">
@@ -364,5 +364,5 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "~@/common/styles/page-table";
-@import "./index";
+@import "~@/common/styles/common-page";
 </style>

@@ -59,12 +59,12 @@ export default {
   },
   methods: {
     setColumn () {
-      const leftKey = ['brand', 'level1', 'level2', 'level3']
+      const leftKey = ['product', 'level1', 'level2', 'level3']
       column3.forEach(item => {
         this.columns.push({
           fieldName: item.key,
           title: item.value,
-          fixed: item.key === 'brand' ? 'left' : '',
+          fixed: item.key === 'product' ? 'left' : '',
           align: leftKey.includes(item.key) ? 'left' : 'right',
           width: '155',
           children: item.children ? this.dealChild(item.children) : null
@@ -88,7 +88,7 @@ export default {
       table3.forEach(item => {
         this.tableData.push(item)
       })
-      const fromatIdArr = ['brandId', 'level1Id', 'level2Id']
+      const fromatIdArr = ['productId', 'level1Id', 'level2Id']
       fromatIdArr.forEach((item, index) => {
         const formatRow = formatRowspanAndColspan(this.tableData, item)
         this.formatMerge(formatRow, index, 1)

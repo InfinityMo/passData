@@ -19,7 +19,7 @@ export const column = [
 export const table = [{
   dataID: 1,
   cellEdit: 0,
-  brand: 'cetaphil/丝塔芙',
+  brand: 'cetaphil/丝塔芙cetaphil/丝塔芙cetaphil/丝塔芙cetaphil/丝塔芙cetaphil/丝塔芙',
   brandId: '1',
   product: '丝塔芙保湿霜550g丝塔芙保湿霜550g丝塔芙保湿霜550g丝塔芙保湿霜550g丝塔芙保湿霜550g丝塔芙保湿霜550g',
   _20210201: '11,833,525.0411,833,525.0411,833,525.04',
@@ -4451,7 +4451,7 @@ export const table2 = [
 ]
 
 export const column3 = [{
-  key: 'brand',
+  key: 'product',
   value: '产品名称'
 }, {
   key: 'level1',
@@ -4496,8 +4496,8 @@ export const column3 = [{
 export const table3 = [
   {
     dataID: 1,
-    brand: '蒂佳婷绿药丸面膜',
-    brandId: '1',
+    product: '蒂佳婷绿药丸面膜',
+    productId: '1',
     level1: '手猫',
     level1Id: 'dsm',
     level2: '手淘搜索',
@@ -4514,8 +4514,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 2,
-    brand: '蒂佳婷绿药丸面膜',
-    brandId: '1',
+    product: '蒂佳婷绿药丸面膜',
+    productId: '1',
     level1: '手猫',
     level1Id: 'dsm',
     level2: '基础工具',
@@ -4532,8 +4532,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 3,
-    brand: '蒂佳婷绿药丸面膜',
-    brandId: '1',
+    product: '蒂佳婷绿药丸面膜',
+    productId: '1',
     level1: '手猫',
     level1Id: 'dsm',
     level2: '基础工具',
@@ -4550,8 +4550,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 4,
-    brand: '蒂佳婷绿药丸面膜',
-    brandId: '1',
+    product: '蒂佳婷绿药丸面膜',
+    productId: '1',
     level1: '手猫',
     level1Id: 'dsm',
     level2: '基础工具',
@@ -4568,8 +4568,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 5,
-    brand: '碧柔倍护水凝露',
-    brandId: '2',
+    product: '碧柔倍护水凝露',
+    productId: '2',
     level1: '手猫',
     level1Id: 'bsm',
     level2: '基础工具',
@@ -4586,8 +4586,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 6,
-    brand: '碧柔倍护水凝露',
-    brandId: '2',
+    product: '碧柔倍护水凝露',
+    productId: '2',
     level1: '手猫',
     level1Id: 'bsm',
     level2: '基础工具',
@@ -4604,8 +4604,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 7,
-    brand: '碧柔倍护水凝露',
-    brandId: '2',
+    product: '碧柔倍护水凝露',
+    productId: '2',
     level1: '手淘',
     level1Id: 'bst',
     level2: '游戏互动',
@@ -4622,8 +4622,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 8,
-    brand: '花王蒸汽眼罩5片装(薰衣草香型)',
-    brandId: '3',
+    product: '花王蒸汽眼罩5片装(薰衣草香型)',
+    productId: '3',
     level1: '手淘',
     level1Id: 'hst',
     level2: '天猫超市',
@@ -4640,8 +4640,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 9,
-    brand: '花王蒸汽眼罩5片装(薰衣草香型)',
-    brandId: '3',
+    product: '花王蒸汽眼罩5片装(薰衣草香型)',
+    productId: '3',
     level1: '手淘',
     level1Id: 'hst',
     level2: '天猫超市',
@@ -4658,8 +4658,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 10,
-    brand: '花王蒸汽眼罩5片装(薰衣草香型)',
-    brandId: '3',
+    product: '花王蒸汽眼罩5片装(薰衣草香型)',
+    productId: '3',
     level1: '手淘',
     level1Id: 'hst',
     level2: '天猫超市',
@@ -4675,11 +4675,10 @@ export const table3 = [
     allnum: '45,766,349',
     allamount: '893,684,123'
   },
-
   {
     dataID: 11,
-    brand: '花王蒸汽眼罩5片装(薰衣草香型)',
-    brandId: '3',
+    product: '花王蒸汽眼罩5片装(薰衣草香型)',
+    productId: '3',
     level1: '手猫',
     level1Id: 'hsm',
     level2: '手淘搜索',
@@ -4696,10 +4695,10 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 12,
-    brand: '丝塔芙润肤乳473ml',
-    brandId: '4',
+    product: '丝塔芙润肤乳473ml',
+    productId: '4',
     level1: '手猫',
-    level1Id: 'hsm',
+    level1Id: 'stfsm',
     level2: '基础工具',
     level2Id: 'stfjcgg',
     level3: '购物车',
@@ -4714,8 +4713,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 13,
-    brand: '丝塔芙润肤乳473ml',
-    brandId: '4',
+    product: '丝塔芙润肤乳473ml',
+    productId: '4',
     level1: '手猫',
     level1Id: 'stfsm',
     level2: '基础工具',
@@ -4732,12 +4731,12 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 14,
-    brand: '蒂佳婷黑炭泡泡面膜',
-    brandId: '5',
+    product: '蒂佳婷黑炭泡泡面膜',
+    productId: '5',
     level1: '手猫',
-    level1Id: 'dsm',
+    level1Id: 'd2sm',
     level2: '基础工具',
-    level2Id: 'djcgg',
+    level2Id: 'd2jcgg',
     level3: '手淘搜索付费流量',
     level3Id: 'stssffll',
     _202103uv: '11,833,525.04',
@@ -4750,12 +4749,12 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 15,
-    brand: '蒂佳婷黑炭泡泡面膜',
-    brandId: '5',
+    product: '蒂佳婷黑炭泡泡面膜',
+    productId: '5',
     level1: '手猫',
-    level1Id: 'dsm',
+    level1Id: 'd2sm',
     level2: '基础工具',
-    level2Id: 'djcgg',
+    level2Id: 'd2jcgg',
     level3: '收藏夹',
     level3Id: 'scj',
     _202103uv: '11,833,525.04',
@@ -4768,12 +4767,12 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 16,
-    brand: '蒂佳婷黑炭泡泡面膜',
-    brandId: '5',
+    product: '蒂佳婷黑炭泡泡面膜',
+    productId: '5',
     level1: '手猫',
-    level1Id: 'dsm',
+    level1Id: 'd2sm',
     level2: '基础工具',
-    level2Id: 'djcgg',
+    level2Id: 'd2jcgg',
     level3: '手淘店铺',
     level3Id: 'stdp',
     _202103uv: '11,833,525.04',
@@ -4786,8 +4785,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 17,
-    brand: '蜜浓氨基酸保湿啫喱面膜22ml*4',
-    brandId: '6',
+    product: '蜜浓氨基酸保湿啫喱面膜22ml*4',
+    productId: '6',
     level1: '手淘',
     level1Id: 'mnst',
     level2: '游戏互动',
@@ -4804,8 +4803,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 18,
-    brand: '蜜浓氨基酸保湿啫喱面膜22ml*4',
-    brandId: '6',
+    product: '蜜浓氨基酸保湿啫喱面膜22ml*4',
+    productId: '6',
     level1: '手淘',
     level1Id: 'mnst',
     level2: '天猫超市',
@@ -4822,8 +4821,8 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 19,
-    brand: '蜜浓氨基酸保湿啫喱面膜22ml*4',
-    brandId: '6',
+    product: '蜜浓氨基酸保湿啫喱面膜22ml*4',
+    productId: '6',
     level1: '手淘',
     level1Id: 'mnst',
     level2: '天猫超市',
@@ -4840,12 +4839,12 @@ export const table3 = [
     allamount: '893,684,123'
   }, {
     dataID: 20,
-    brand: '碧柔水活防晒水感凝蜜50g*2',
-    brandId: '7',
+    product: '碧柔水活防晒水感凝蜜50g*2',
+    productId: '7',
     level1: '手淘',
-    level1Id: 'bst',
+    level1Id: 'b2st',
     level2: '天猫超市',
-    level2Id: 'bsttmcs',
+    level2Id: 'b2sttmcs',
     level3: '手猫天猫超市-基础工具',
     level3Id: 'stdgjcgg',
     _202103uv: '11,833,525.04',
