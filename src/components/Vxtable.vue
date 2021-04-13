@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-import { formatRowspanAndColspan } from './data'
+import { column2, table2, formatRowspanAndColspan } from './data'
 import compontentTable from '@/mixins/compontentTable2'
 export default {
   mixins: [compontentTable],
@@ -68,13 +68,13 @@ export default {
     }
   },
   created () {
-    // this.setColumn()
-    // this.setTableData()
-    this.getColumns().then(res => {
-      if (res) {
-        this.getTableData()
-      }
-    })
+    this.setColumn(column2)
+    this.setTableData(table2)
+    // this.getColumns().then(res => {
+    //   if (res) {
+    //     this.getTableData()
+    //   }
+    // })
   },
   methods: {
     getColumns () {
@@ -97,7 +97,8 @@ export default {
       })
     },
     setColumn (column) {
-      const leftKey = ['group_name', 'level1name', 'level2name', 'level3name']
+      // const leftKey = ['group_name', 'level1name', 'level2name', 'level3name']
+      const leftKey = ['brand', 'level1', 'level2', 'level3']
       column.forEach(item => {
         this.columns.push({
           fieldName: item.key,
@@ -140,7 +141,8 @@ export default {
         arr.push(item.level1id)
         this.tableData.push(item)
       })
-      const fromatIdArr = ['groupId', 'level1id']
+      // const fromatIdArr = ['groupId', 'level1id']
+      const fromatIdArr = ['brandId', 'level1Id']
       // fromatIdArr.forEach(item => {
       //   this.tableData.sort((item) => {
 
