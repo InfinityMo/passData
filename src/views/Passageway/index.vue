@@ -55,6 +55,8 @@
               <el-form-item label="品牌选择："
                             prop="brandList">
                 <el-select placeholder="请选择品牌"
+                           multiple
+                           collapse-tags
                            popper-class="reset-select"
                            v-model="searchForm.brandList">
                   <el-option v-for="item in brandOptions"
@@ -69,6 +71,8 @@
               <el-form-item label="商品选择："
                             prop="itemList">
                 <el-select placeholder="请选择商品"
+                           multiple
+                           collapse-tags
                            popper-class="reset-select"
                            v-model="searchForm.itemList">
                   <el-option v-for="item in productOptions"

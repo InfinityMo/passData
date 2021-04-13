@@ -27,7 +27,6 @@ export function getLastThirtyDay () {
   }
   return [prevDate, prevOneDate]
 }
-
 // 最近7天
 export function getLastSevenDay () {
   var curDate = new Date()

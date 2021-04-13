@@ -38,11 +38,16 @@
   </div>
 </template>
 <script>
-import {
-  column2, table2,
-  formatRowspanAndColspan
-} from './data'
+import { formatRowspanAndColspan } from './data'
+import compontentTable from '@/mixins/compontentTable2'
 export default {
+  mixins: [compontentTable],
+  props: {
+    form: {
+      type: Object,
+      default: () => { }
+    }
+  },
   data () {
     return {
       columns: [],
@@ -63,46 +68,89 @@ export default {
     }
   },
   created () {
-    this.setColumn()
-    this.setTableData()
+    // this.setColumn()
+    // this.setTableData()
+    this.getColumns().then(res => {
+      if (res) {
+        this.getTableData()
+      }
+    })
   },
   methods: {
-    setColumn () {
-      const leftKey = ['brand', 'level1', 'level2', 'level3']
-      column2.forEach(item => {
+    getColumns () {
+      this.columns = []
+      return new Promise((resolve, reject) => {
+        this.$store.commit('SETSPINNING', true)
+        const submitform = {
+          ...this.form,
+          groupList: this.form.groupList ? this.form.groupList.join(',') : ''
+        }
+        delete submitform.dateTime
+        this.$request.post('/brandColumn', submitform, true).then(res => {
+          if (res) {
+            const resData = res.data || []
+            this.setColumn(resData)
+            this.$store.commit('SETSPINNING', false)
+            resolve(true)
+          }
+        })
+      })
+    },
+    setColumn (column) {
+      const leftKey = ['group_name', 'level1name', 'level2name', 'level3name']
+      column.forEach(item => {
         this.columns.push({
           fieldName: item.key,
           title: item.value,
-          fixed: item.key === 'brand' ? 'left' : '',
+          fixed: this._setFixed(item.key, column.length),
           align: leftKey.includes(item.key) ? 'left' : 'right',
-          width: '155',
-          children: item.children ? this.dealChild(item.children) : null
+          width: this._setWidth(item.key, column.length),
+          children: item.children ? this.dealChild(item.children, column) : null
         })
       })
-      // console.log(this.columns)
     },
-    dealChild (item) {
+    dealChild (item, column) {
       const arr = []
       item.forEach(item => {
         arr.push({
           fieldName: item.key,
           title: item.value,
           fixed: '',
-          width: '155'
+          width: this._setWidth(item.key, column.length)
         })
       })
       return arr
     },
-    setTableData () {
-      table2.forEach(item => {
+    getTableData () {
+      this.tableData = []
+      this.$store.commit('SETSPINNING', true)
+      const submitform = {
+        ...this.form,
+        groupList: this.form.groupList ? this.form.groupList.join(',') : ''
+      }
+      delete submitform.dateTime
+      this.$request.post('/brandList', submitform, true).then(res => {
+        const resultData = res.data || []
+        this.setTableData(resultData)
+      })
+    },
+    async setTableData (resultData) {
+      const arr = []
+      resultData.forEach(item => {
+        arr.push(item.level1id)
         this.tableData.push(item)
       })
-      const fromatIdArr = ['brandId', 'level1Id', 'level2Id']
+      const fromatIdArr = ['groupId', 'level1id']
+      // fromatIdArr.forEach(item => {
+      //   this.tableData.sort((item) => {
+
+      //   })
+      // })
+
       fromatIdArr.forEach((item, index) => {
         const formatRow = formatRowspanAndColspan(this.tableData, item)
         this.formatMerge(formatRow, index, 1)
       })
-      // eslint-disable-next-line no-unused-vars
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
         this.$emit('tableRender', true)
@@ -123,7 +171,7 @@ export default {
         )
         return cur + prev
       }, 0)
-      console.log(this.mergeCells)
+      // console.log(this.mergeCells)
     },
     tableSummaries (param) {
       const { columns, data } = param
@@ -133,7 +181,9 @@ export default {
           sums[index] = '总计'
           return
         }
-        const values = data.map(item => Number(item[column.property].replace(/,/g, '')))
+        const values = data.map((item, index) => {
+          Number(item[column.property] ? item[column.property].replace(/,/g, '') : '-')
+        })
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)

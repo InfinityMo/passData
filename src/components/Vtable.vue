@@ -191,10 +191,6 @@ export default {
       this.$request.post('/channelList', submitform, true).then(res => {
         const resultData = res.data || []
         this.setTableData(resultData)
-        //  通知父组件表格dom已渲染完成
-        // this.$nextTick(() => {
-        //   this.$emit('tableRender', true)
-        // })
       })
     },
     setTableData (resultData) {

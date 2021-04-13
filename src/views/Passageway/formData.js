@@ -21,8 +21,7 @@ export const passageWayOption = [{
 }, {
   value: '4',
   label: '四级'
-}
-]
+}]
 
 export const dataTypeOption = [
   {
