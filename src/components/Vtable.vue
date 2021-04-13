@@ -54,7 +54,7 @@
                :merge-cells="mergeCells"
                :footer-method="tableSummaries"
                keep-source
-               show-footer
+               :show-footer="this.tableData.length>0"
                ref="xTable"
                :max-height="calcHeight()">
       <vxe-table-column v-for="col in columns"
@@ -70,7 +70,9 @@
 </template>
 <script>
 import { formatRowspanAndColspan } from './data'
+import compontentTable from '@/mixins/compontentTable'
 export default {
+  mixins: [compontentTable],
   props: {
     form: {
       type: Object,
@@ -123,13 +125,13 @@ export default {
   },
   mounted () {
     // 当前窗口变化
-    window.onresize = () => {
-      this.calcHeight()
-      this.$nextTick(() => {
-        this.$refs.xTable.recalculate()
-        this.$emit('tableRender', true)
-      })
-    }
+    // window.onresize = () => {
+    //   this.calcHeight()
+    //   this.$nextTick(() => {
+    //     this.$refs.xTable.recalculate()
+    //     this.$emit('tableRender', true)
+    //   })
+    // }
   },
   methods: {
     calcHeight () {
@@ -162,29 +164,21 @@ export default {
       })
     },
     setColumn (column) {
-      const leftKey = ['brand', 'itemList']
+      const leftKey = ['brand', 'link']
       column.forEach(item => {
-        let width = '150'
-        if (item.key === 'brand') {
-          width = '140'
-        }
-        if (item.key === 'itemList') {
-          width = '309'
-        }
         this.columns.push({
           fieldName: item.key,
           title: item.value,
-          fixed: item.key === 'brand' ? 'left' : '',
-          align: leftKey.includes(item.key) ? 'left' : 'right',
           edit: item.edit,
-          width: width
+          fixed: this._setFixed(item.key, column.length),
+          align: leftKey.includes(item.key) ? 'left' : 'right',
+          width: this._setWidth(item.key, column.length)
         })
       })
     },
     getTableData () {
       this.tableData = []
       this.$store.commit('SETSPINNING', true)
-
       const submitform = {
         ...this.form,
         brandList: this.form.brandList ? this.form.brandList.join(',') : '',
@@ -212,9 +206,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
         this.$emit('tableRender', true)
-        //   this.$nextTick(() => {
-
-        // })
       })
       //
     },
@@ -259,7 +250,7 @@ export default {
       return [sums]
     },
     cellDbClick (row) {
-      if (row.column.property === 'itemList' || row.column.property === 'brand') {
+      if (row.column.property === 'link' || row.column.property === 'brand') {
         this.$refs.xTable.clearActived()
         return false
       }

@@ -27,13 +27,14 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <el-upload accept=".xlsx,.xls"
+                <el-upload class="dropdown-upload"
+                           accept=".xlsx,.xls"
                            action=""
                            :before-upload="beforeUpload"
                            :file-list="fileList"
                            :show-file-list="false">
                   <el-button plain
-                             class="import-btn"><i class="import-icon"></i>导入数据</el-button>
+                             class="import-btn">导入数据</el-button>
                 </el-upload>
               </el-dropdown-item>
               <el-dropdown-item @click="viewJournal">查看日志</el-dropdown-item>

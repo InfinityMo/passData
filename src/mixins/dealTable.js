@@ -194,9 +194,9 @@ const mixins = {
     fromatMonth () {
       return monthSpliceDay(this.searchForm.month)
     },
-    resetForm (formName) {
-      this.timeSection = []
+    _resetForm (formName) {
       this.$refs[formName].resetFields()
+      this.searchForm.dateTime = getLastSevenDay()
     }
   }
 }

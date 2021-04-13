@@ -9,9 +9,11 @@
                    ref="searchForm"
                    label-width="90px">
             <el-col :span="8">
-              <el-form-item label="通道等级：">
+              <el-form-item label="通道等级："
+                            prop="level">
                 <el-select placeholder="请选择通道等级"
                            popper-class="reset-select"
+                           @change="levelChange"
                            v-model="searchForm.level">
                   <el-option v-for="item in passageWayOption"
                              :key="item.value"
@@ -22,7 +24,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="通道选择：">
+              <el-form-item label="通道选择："
+                            prop="channelList">
                 <el-cascader placeholder="请选择通道"
                              v-model="searchForm.channelList"
                              :options="channelOptions"
@@ -49,7 +52,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="品牌选择：">
+              <el-form-item label="品牌选择："
+                            prop="brandList">
                 <el-select placeholder="请选择品牌"
                            popper-class="reset-select"
                            v-model="searchForm.brandList">
@@ -62,7 +66,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="商品选择：">
+              <el-form-item label="商品选择："
+                            prop="itemList">
                 <el-select placeholder="请选择商品"
                            popper-class="reset-select"
                            v-model="searchForm.itemList">
@@ -75,7 +80,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="数据类型：">
+              <el-form-item label="数据类型："
+                            prop="dataType">
                 <el-select placeholder="请选择数据类型"
                            popper-class="reset-select"
                            v-model="searchForm.dataType">
@@ -88,7 +94,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="链接名称/Id：">
+              <el-form-item label="链接名称/Id："
+                            prop="linkList">
                 <!-- <el-select v-model="searchForm.linkList"
                            filterable
                            placeholder="请输入链接名称或Id">
@@ -269,8 +276,6 @@ export default {
   created () {
     this.getSelectData()
     this.searchForm.dateTime = getLastSevenDay()
-    // this.getSelectData()
-    // this.timeTypeChange(1)
   },
   mounted () {
     // 创建水印
@@ -308,7 +313,6 @@ export default {
       })
     },
     searchHandle () {
-      debugger
       this.submitForm = { ...this.searchForm }
     },
     tableRender (flag) {
@@ -324,13 +328,19 @@ export default {
     },
     remoteMethod (query) {
       if (query !== '') {
-        // debugger
         this.linkSearchOption = this.restaurants.filter(item => {
-          return item.label.toLowerCase().indexOf(query.toLowerCase()) >= 0
+          return (item.label.toLowerCase().indexOf(query.toLowerCase()) >= 0) || item.value.toLowerCase().indexOf(query.toLowerCase()) >= 0
         })
       } else {
         this.linkSearchOption = []
       }
+    },
+    levelChange (value) {
+      this.searchForm.channelList = []
+      this.channelOptions = []
+      this._getCascader(value, 3).then(res => {
+        this.channelOptions = res
+      })
     },
     // querySearch (queryString, cb) {
     //   const restaurants = this.restaurants
