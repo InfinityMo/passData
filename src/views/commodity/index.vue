@@ -12,10 +12,11 @@
               <el-form-item label="产品选择："
                             prop="dataType">
                 <el-select placeholder="请选择产品"
+                           multiple
+                           collapse-tags
                            popper-class="reset-select"
-                           @change="timeTypeChange"
-                           v-model="searchForm.timeType">
-                  <el-option v-for="item in timeTypeArr"
+                           v-model="searchForm.groupList">
+                  <el-option v-for="item in brandOptions"
                              :key="item.value"
                              :label="item.label"
                              :value="item.value">
@@ -28,11 +29,12 @@
                             prop="dataType">
                 <el-date-picker v-model="searchForm.dateTime"
                                 :editable="false"
+                                :clearable="false"
                                 value-format="yyyy-MM"
                                 format="yyyy-MM"
                                 type="monthrange"
                                 range-separator="~"
-                                :picker-options="monthRangePickerOptions"
+                                :picker-options="threeMonthRangePickerOptions"
                                 start-placeholder="开始月份"
                                 end-placeholder="结束月份">
                 </el-date-picker>
@@ -51,10 +53,10 @@
         <div class="table-wrap"
              ref="table">
           <div class="flex-between-center table-info">
-            <div class="flex-item-center">
+            <!-- <div class="flex-item-center">
               <p class="select-tip"
                  v-show="timeTypeSelect!==''||shopSelect!==''"><span>{{timeTypeSelect}}</span><em v-show="timeTypeSelect!==''&&shopSelect!==''">，</em><span>{{shopSelect}}</span></p>
-            </div>
+            </div> -->
             <div class="btn-gather">
               <el-button type="primary"
                          @click="downTable"><i class="export-icon"></i>下载报表</el-button>
@@ -64,7 +66,8 @@
                  @monthDialog="openMonthDialog"
                  @tableRender="tableRender" /> -->
           <!-- <Table /> -->
-          <Vtable />
+          <Vtable @tableRender="tableRender"
+                  :form="submitForm" />
         </div>
       </div>
     </div>
@@ -95,7 +98,6 @@ import tableMixin from '@/mixins/dealTable'
 import { monthSpliceDay } from '@/common/utils/timeCalc'
 import { scrollTo } from '@/common/utils/funcStore'
 import watermark from '@/common/utils/watermark'
-import { timeTypeArr } from '../index/data'
 // import Table from '../index/table'
 // import Vtable from '@/components/Vtable'
 import Vtable from '@/components/Vxetable'
@@ -110,35 +112,14 @@ export default {
     return {
       // userPowerArr: [],
       searchForm: JSON.parse(JSON.stringify(searchForm)),
-      timeSection: [], // 时间范围
       submitForm: {
-        timeType: 1,
-        startDate: '',
-        endDate: '',
-        shop: '',
-        dataType: []
+        start: '',
+        end: '',
+        dateTime: [], // 日期
+        brandId: [] // 品牌
       },
-      monthForm: {
-        timeType: '',
-        startDate: '',
-        endDate: '',
-        shop: '',
-        dataType: []
-      },
-      timeTypeArr: timeTypeArr,
-      shopArr: [],
-      channelOptions: [],
-      monthDataShow: false,
-      randomKey: 1,
-      isShowTable: false,
-      searchClick: false,
-      fileList: [],
-      fileType: ['xlsx', 'xls'],
-      monthDialogTitle: '',
-      cacheMonth: '',
-      cacheTimeSection: [],
-      monthRangeRadomLey: 1,
-      confirmCover: false
+      // 品牌
+      brandOptions: []
     }
   },
   watch: {
@@ -177,7 +158,8 @@ export default {
     // }
   },
   created () {
-    // this.getSelectData()
+    this.getSelectData()
+    this.setMonthTime()
     // this.timeTypeChange(1)
   },
   mounted () {
@@ -188,26 +170,9 @@ export default {
   },
   methods: {
     ...mapMutations({ SAVESHOPID: 'SAVESHOPID', SAVESHOPDATA: 'SAVESHOPDATA' }),
-
     getSelectData () {
-      Promise.all([this._getSelectData(1), this._getCascader(2)]).then(res => {
-        this.shopArr = res[0]
-        // 缓存当前的所有店铺信息
-        this.SAVESHOPDATA(this.shopArr)
-        this.searchForm.shop = this.shopArr[0].value || ''
-        this.submitForm.shop = this.shopArr[0].value || ''
-        this.channelOptions = res[1]
-        this.extendOptions[0].children.map(i => {
-          this.searchForm.dataType.push([this.extendOptions[0].value, i.value])
-        })
-        const dataTypeArr = []
-        this.searchForm.dataType.map(i => {
-          dataTypeArr.push(i[1] || '')
-        })
-        this.submitForm.dataType = dataTypeArr.join()
-        this.submitForm.startDate = this.timeSection[0]
-        this.submitForm.endDate = this.timeSection[1]
-        this.isShowTable = true
+      Promise.all([this._getSelectData(1)]).then(res => {
+        this.brandOptions = res[0]
       })
     },
     searchHandle () {
@@ -240,37 +205,10 @@ export default {
         }
       })
     },
-    confirmCoverDialog (flag) {
-      this.confirmCover = flag
-    },
-    dialogTableRender (flag) {
-      if (flag) {
-        this.$nextTick(() => {
-          this.$store.commit('SETSPINNING', false)
-        })
-      }
-    },
-    openMonthDialog (columnKey, columnValue) {
-      this.monthDialogTitle = columnValue
-      const monthKey = `${columnKey.substr(3, 4)}-${columnKey.substr(7)}`
-      const startDate = monthSpliceDay(monthKey)[0]
-      const endDate = monthSpliceDay(monthKey)[1]
-      this.monthForm = { ...this.submitForm, timeType: 3, startDate: startDate, endDate: endDate }
-      this.monthDataShow = true
-    },
-    beforeUpload (file) {
-      const { name } = file
-      if (!this.fileType.includes(name.split('.')[name.split.length - 1])) {
-        this.$message.warning('文件格式不正确，请检查文件')
-        return false
-      }
-      const fileSize = file.size / 1024 / 1024
-      if (fileSize > 5) {
-        this.$message.warning('文件上传过大,请检查文件')
-        return false
-      }
-      this.fileList = [...this.fileList, file]
-      this.uploadHandel()
+    setMonthTime () {
+      this.searchForm.dateTime = ['2021-02', '2021-04']
+      this.submitForm.start = '2021-02-01'
+      this.submitForm.end = '2021-04-13'
     },
     // 下载模板
     downMold () {

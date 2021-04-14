@@ -11,7 +11,7 @@
                show-footer
                :scroll-x="{enabled: false}"
                ref="xTable"
-               height="600">
+               :max-height="calcHeight">
       <template v-for="col in columns">
         <vxe-table-column v-if="!col.children"
                           :key="col.fieldName"
@@ -23,12 +23,13 @@
         </vxe-table-column>
         <vxe-table-colgroup v-else
                             :key="col.fieldName"
+                            :align="col.align"
                             :title="col.title">
           <vxe-table-column v-for="colChild in col.children"
                             :key="colChild.fieldName"
                             :field="colChild.fieldName"
                             :title="colChild.title"
-                            :align="col.align"
+                            :align="colChild.align"
                             :width="colChild.width">
           </vxe-table-column>
         </vxe-table-colgroup>
@@ -38,64 +39,112 @@
 </template>
 <script>
 import {
-  column3, table3,
+  //  column2, table2,
   formatRowspanAndColspan
 } from './data'
+import compontentTable from '@/mixins/compontentTable2'
 export default {
+  mixins: [compontentTable],
+  props: {
+    form: {
+      type: Object,
+      default: () => { }
+    }
+  },
   data () {
     return {
       columns: [],
       tableData: [],
-      mergeCells: [],
-      tableCellOrginVal: '',
-      tableCellEditVal: '',
-      cellInputWatch: '',
-      currentEditCellKey: ''
+      mergeCells: []
+    }
+  },
+  computed: {
+    calcHeight () {
+      let height = 0
+      const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
+      height = clientHeight - 197
+      return height
     }
   },
   created () {
-    this.setColumn()
-    this.setTableData()
+    this.getColumns().then(res => {
+      if (res) {
+        this.getTableData()
+      }
+    })
   },
   methods: {
-    setColumn () {
-      const leftKey = ['product', 'level1', 'level2', 'level3']
-      column3.forEach(item => {
+    getColumns () {
+      this.columns = []
+      return new Promise((resolve, reject) => {
+        this.$store.commit('SETSPINNING', true)
+        const submitform = {
+          ...this.form,
+          groupList: this.form.groupList ? this.form.groupList.join(',') : ''
+        }
+        delete submitform.dateTime
+        this.$request.post('/productColumn', submitform, true).then(res => {
+          if (res) {
+            const resData = res.data || []
+            this.setColumn(resData)
+            this.$store.commit('SETSPINNING', false)
+            resolve(true)
+          }
+        })
+      })
+    },
+    setColumn (column) {
+      column.forEach(item => {
         this.columns.push({
           fieldName: item.key,
           title: item.value,
-          fixed: item.key === 'product' ? 'left' : '',
-          align: leftKey.includes(item.key) ? 'left' : 'right',
-          width: '155',
-          children: item.children ? this.dealChild(item.children) : null
+          fixed: this._setFixed(item.key, column.length),
+          align: this._setAlign(item),
+          width: this._setWidth(item.key, column.length, 'product'),
+          children: item.children ? this.dealChild(item.children, column) : null
         })
       })
-      // console.log(this.columns)
     },
-    dealChild (item) {
+    dealChild (item, column) {
       const arr = []
       item.forEach(item => {
         arr.push({
           fieldName: item.key,
           title: item.value,
           fixed: '',
-          width: '155'
+          align: this._setAlign(item),
+          width: this._setWidth(item.key, column.length)
         })
       })
       return arr
     },
-    setTableData () {
-      table3.forEach(item => {
+    getTableData () {
+      this.tableData = []
+      this.$store.commit('SETSPINNING', true)
+      const submitform = {
+        ...this.form,
+        groupList: this.form.groupList ? this.form.groupList.join(',') : ''
+      }
+      delete submitform.dateTime
+      this.$request.post('/productList', submitform, true).then(res => {
+        const resultData = res.data || []
+        this.setTableData(resultData)
+      })
+    },
+    setTableData (resultData) {
+      const arr = []
+      resultData.forEach(item => {
+        arr.push(item.level1id)
         this.tableData.push(item)
       })
-      const fromatIdArr = ['productId', 'level1Id', 'level2Id']
+      const fromatIdArr = ['groupId', 'level1id', 'level2id']
       fromatIdArr.forEach((item, index) => {
         const formatRow = formatRowspanAndColspan(this.tableData, item)
         this.formatMerge(formatRow, index, 1)
       })
-      console.log(this.mergeCells)
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
+        this.$emit('tableRender', true)
       })
       //
     },
@@ -122,7 +171,9 @@ export default {
           sums[index] = '总计'
           return
         }
-        const values = data.map(item => Number(item[column.property].replace(/,/g, '')))
+        const values = data.map((item, index) => {
+          Number(item[column.property] ? item[column.property].replace(/,/g, '') : '-')
+        })
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
@@ -138,54 +189,7 @@ export default {
         }
       })
       return [sums]
-    },
-    cellDbClick (row) {
-      // this.tableData.forEach(item => {
-      //   item.cellEdit = 0
-      // })
-      row.data[row.$rowIndex].cellEdit = 1
-      const cellVal = row.data[row.$rowIndex][row.column.property].replace(/,/g, '')
-      if (Number(cellVal)) {
-        this.tableCellEditVal = Number(cellVal)
-        this.tableCellOrginVal = Number(cellVal)
-      } else {
-        this.tableCellEditVal = ''
-        this.tableCellOrginVal = ''
-      }
-      this.currentEditCellKey = row.column.property
-    },
-    tableCellBlur (row) {
-      // debugger
-      // console.log(1)
-      // row.cellEdit = 0
-    },
-    tableCellInput (val, row) {
-      // const reg = /^\d+(\.\d{0,2})?$/
-      this.tableCellEditVal = this.tableCellEditVal.replace(/[^\d|.]/g, '')
-      const cellSplit = this.tableCellEditVal.split('.')
-      if (cellSplit.length > 2) {
-        this.tableCellEditVal = String(this.tableCellEditVal).replace('.', '')
-        return
-      }
-      if (cellSplit.length === 2) {
-        if (cellSplit[1].length > 2) {
-          if (this.cellInputWatch > this.tableCellEditVal) {
-            this.tableCellEditVal = String(this.tableCellEditVal).replace('.', '')
-          } else {
-            this.tableCellEditVal = this.tableCellEditVal.toString().substr(0, this.tableCellEditVal.toString().length - 1)
-          }
-        }
-      }
-    }
-  },
-  directives: {
-    focus: {
-      inserted (el, binding, vnode) {
-        el.querySelector('input').focus()
-      }
     }
   }
 }
 </script>
-<style lang="less" scoped>
-</style>

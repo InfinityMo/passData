@@ -34,7 +34,7 @@
                                 format="yyyy-MM"
                                 type="monthrange"
                                 range-separator="~"
-                                :picker-options="monthRangePickerOptions"
+                                :picker-options="threeMonthRangePickerOptions"
                                 start-placeholder="开始月份"
                                 end-placeholder="结束月份">
                 </el-date-picker>

@@ -3,7 +3,13 @@ import { createUUID } from '../common/utils/funcStore'
 const mixins = {
   data () {
     return {
+      PAGING: {
+        total: 0,
+        pageNum: 1,
+        pageSize: 10
+      },
       pickerRangeMonth: '',
+      pickerThreeRangeMonth: '',
       pickerMinDate: '',
       pickerOptions: {
         onPick: ({ maxDate, minDate }) => {
@@ -31,7 +37,7 @@ const mixins = {
           return time.getTime() > new Date(`${this.getLastMonth()}-01`).getTime() // 如果现在是12月，则getLastMonth（）为 2020-11，那么十二月不能选，之后年的月份都不可选
         }
       },
-      monthRangePickerOptions: {
+      twelveMonthRangePickerOptions: {
         onPick: ({ maxDate, minDate }) => {
           this.pickerRangeMonth = (minDate && minDate.getTime()) || (maxDate && maxDate.getTime())
           if (maxDate) {
@@ -44,6 +50,51 @@ const mixins = {
             const pickYear2 = 330 * 24 * 3600 * 1000
             let maxTime = this.pickerRangeMonth + pickYear1
             const minTime = this.pickerRangeMonth - pickYear2
+            if (maxTime > new Date()) {
+              maxTime = new Date()
+            }
+            return (time && time.getTime() >= maxTime) || (time && time.getTime() <= minTime)
+          }
+          return time && time.getTime() > Date.now()
+        }
+      },
+      threeMonthRangePickerOptions: {
+        onPick: ({ maxDate, minDate }) => {
+          this.pickerThreeRangeMonth = (minDate && minDate.getTime()) || (maxDate && maxDate.getTime())
+          if (maxDate) {
+            this.pickerThreeRangeMonth = ''
+          }
+        },
+        disabledDate: (time) => {
+          if (this.pickerThreeRangeMonth) {
+            // const pickYear1 = 93 * 24 * 3600 * 1000
+            // const pickYear2 = 88 * 24 * 3600 * 1000
+            // debugger
+            const pickDate = new Date(this.pickerThreeRangeMonth)
+            const year = pickDate.getFullYear()
+            const month = pickDate.getMonth() + 1
+            const day = pickDate.getDate()
+            let maxYear = year
+            let maxMonth = month + 2
+            if (maxMonth > 12) {
+              maxYear = year + 1
+              maxMonth -= 12
+            }
+            let minYear = year
+            let minMonth = month - 2
+            if (minMonth <= 0) {
+              minYear = year - 1
+              minMonth += 12
+            }
+            const pickYear1 = new Date(`${maxYear}-${maxMonth}-${day}`).getTime()
+            const pickYear2 = new Date(`${minYear}-${minMonth}-${day}`).getTime()
+
+            // month += 3
+            // if (month > 12) {
+            //   year += 1
+            // }
+            let maxTime = this.pickerThreeRangeMonth + pickYear1
+            const minTime = this.pickerThreeRangeMonth - pickYear2
             if (maxTime > new Date()) {
               maxTime = new Date()
             }

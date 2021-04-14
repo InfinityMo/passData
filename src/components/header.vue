@@ -20,6 +20,10 @@
                          name="commodity">
               <span slot="label">商品分析</span>
             </el-tab-pane>
+            <el-tab-pane label="链接分类"
+                         name="classify">
+              <span slot="label">链接分类</span>
+            </el-tab-pane>
           </el-tabs>
           <el-dropdown class="more-operate">
             <span class="el-dropdown-link">
@@ -37,7 +41,7 @@
                              class="import-btn">导入数据</el-button>
                 </el-upload>
               </el-dropdown-item>
-              <el-dropdown-item @click="viewJournal">查看日志</el-dropdown-item>
+              <el-dropdown-item @click.native="viewJournal">查看日志</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <el-popover placement="bottom"
@@ -69,7 +73,7 @@
       <standard-table class="journal-table"
                       :dataSource="tableData"
                       :columns="columns"
-                      layout="total, pager"
+                      :paginationLayout="['total', 'prev', 'pager', 'next']"
                       :pagination="PAGING"
                       @tableChange="tableChange" />
     </el-dialog>
@@ -144,7 +148,7 @@ export default {
         pageSize: 10
       },
       columns: [{
-        dataKey: 'time',
+        dataKey: 'date',
         title: '日期',
         align: 'left',
         width: 150
@@ -159,19 +163,9 @@ export default {
         align: 'left',
         width: 80
       }, {
-        dataKey: 'event',
+        dataKey: 'detail',
         title: '操作',
         align: 'left'
-      }, {
-        dataKey: 'old',
-        title: '操作前数据',
-        align: 'left',
-        width: 120
-      }, {
-        dataKey: 'new',
-        title: '操作后数据',
-        align: 'left',
-        width: 120
       }],
       tableData: [],
       editForm: {
@@ -225,8 +219,7 @@ export default {
     getTableData () {
       this.$request.post('/dialog', {
         pageNum: this.PAGING.pageNum,
-        pageSize: this.PAGING.pageSize,
-        shop: this.$store.state.shopId || ''
+        pageSize: this.PAGING.pageSize
       }).then(res => {
         const resData = res.data.result || []
         this.tableData = resData

@@ -29,9 +29,9 @@ const compontentTable = {
         return width
       }
       if (clientHeight < 1920) {
-        width = columnLength > 7 ? '150' : ''
+        width = columnLength > 7 ? '130' : ''
       } else {
-        width = columnLength > 11 ? '150' : ''
+        width = columnLength > 11 ? '130' : ''
       }
       return width
     }

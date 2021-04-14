@@ -28,6 +28,12 @@ const routes = [
     meta: { title: '商品分析', keepAlive: true, isShowHead: true },
     component: () => import('@/views/commodity/index.vue')
   },
+  {
+    path: '/classify',
+    name: 'classify',
+    meta: { title: '商品分析', keepAlive: true, isShowHead: true },
+    component: () => import('@/views/classify/index.vue')
+  },
   // {
   //   path: '/promot',
   //   name: 'Promot',
