@@ -3,7 +3,15 @@
     <standard-table :dataSource="tableData"
                     :columns="columns"
                     :pagination="PAGING"
-                    :paginationLayout="['total', 'prev', 'pager', 'next']" />
+                    :paginationLayout="['total', 'prev', 'pager', 'next']">
+      <!-- <div slot="brand">
+        <el-checkbox-group v-model="checkList">
+          <el-checkbox v-for="item in checkListArr"
+                       :key="item.value"
+                       :label="item.label"></el-checkbox>
+        </el-checkbox-group>
+      </div> -->
+    </standard-table>
   </div>
 </template>
 <script>
@@ -17,13 +25,25 @@ export default {
       // columnAllShop: columnsSingleShopsData(this.$createElement, this),
       tableData: [],
       iconClass: true,
-      transitionShow: false
+      isShowTransition: false,
+      checkList: ['0'],
+      checkListArr: [{
+        value: '0',
+        label: '未分类'
+      }, {
+        value: '1',
+        label: '已分类'
+      }]
     }
   },
   methods: {
+    handleCheckedCitiesChange (value) {
+      // debugger
+    },
     toggleIcon () {
+      // debugger
       this.iconClass = !this.iconClass
-      this.transitionShow = true
+      this.isShowTransition = !this.isShowTransition
     }
   }
 }

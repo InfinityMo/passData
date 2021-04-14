@@ -9,9 +9,11 @@
                        :align="column.align||''"
                        :fixed="column.fixed"
                        :width="column.width">
-        <template v-slot:header
+        <template slot="header"
+                  slot-scope="scope"
                   v-if="column.columnRender">
           <operate :render="column.columnRender"
+                   :row="scope.row"
                    :column="column">
           </operate>
         </template>

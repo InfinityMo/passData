@@ -15,19 +15,26 @@ export const linkColumns = (h, $this) => [{
 }, {
   dataKey: 'brand',
   title: '品牌',
-  align: 'left',
   columnRender: () => {
     return (
-      <div onClick={() => $this.toggleIcon()}>
-        <span>品牌</span>
-        <i class={$this.iconClass ? 'el-icon-arrow-down' : 'el-icon-arrow-up'}>
-        </i>
+      <div >
+        <span onClick={() => $this.toggleIcon()}>品牌<i class={$this.iconClass ? 'el-icon-arrow-down' : 'el-icon-arrow-up'}></i></span>
         <transition name="el-zoom-in-top">
-          111
+          {$this.isShowTransition ? (<div>
+            <el-checkbox-group value={$this.checkList} onChange={$this.handleCheckedCitiesChange.bind($this)}>
+              {$this.checkList}
+              {
+                $this.checkListArr.map((item, index) =>
+                  <el-checkbox key={item.value} label={item.label}></el-checkbox>
+                )
+              }
+            </el-checkbox-group>
+          </div>) : ''}
         </transition>
       </div>
     )
-  }
+  },
+  align: 'left'
 }, {
   dataKey: 'product',
   title: '商品',
