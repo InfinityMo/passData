@@ -1,25 +1,25 @@
 <template>
   <div>
-    <el-dialog title="新增品牌"
+    <el-dialog title="添加商品"
                custom-class="edit-pwd"
-               :visible.sync="addDialogShow"
+               :visible.sync="addGoodsDialogShow"
                :close-on-click-modal="false"
                :destroy-on-close="true"
-               :before-close="addDialogClose"
-               width="452px">
+               :before-close="addGoodsDialogClose"
+               width="966px">
       <el-form :model="form"
                label-width="82px"
                ref="dynamicForm">
         <el-row class="row-item"
                 v-for="(dynamicItem, index) in form.dynamicForm"
                 :key="dynamicItem.itemId">
-          <el-form-item label="品牌名称："
-                        :ref="'dynamicForm.' + index + '.brandName'"
-                        :prop="'dynamicForm.' + index + '.brandName'"
-                        :rules="{required: true, message: '品牌名称不能为空', trigger: 'blur'}"
+          <el-form-item label="商品名称："
+                        :ref="'dynamicForm.' + index + '.productName'"
+                        :prop="'dynamicForm.' + index + '.productName'"
+                        :rules="{required: true, message: '商品不能为空', trigger: 'blur'}"
                         class="form-item">
-            <el-input placeholder="请输入品牌名称"
-                      v-model="dynamicItem.brandName"
+            <el-input placeholder="请输入商品名称"
+                      v-model="dynamicItem.productName"
                       maxlength="20"
                       show-word-limit>
             </el-input>
@@ -30,12 +30,12 @@
         <el-form-item>
           <div class="add-wrap"
                v-if="form.dynamicForm.length<30"
-               @click="addHandle">添加品牌</div>
+               @click="addHandle">添加商品</div>
         </el-form-item>
       </el-form>
       <span slot="footer"
             class="dialog-footer user-edit">
-        <el-button @click="addDialogClose">取 消</el-button>
+        <el-button @click="addGoodsDialogClose">取 消</el-button>
         <el-button type="primary"
                    @click="confirmHandle">确 定</el-button>
       </span>
@@ -46,10 +46,15 @@
 import { createUUID } from '@/common/utils/funcStore'
 export default {
   props: {
-    addDialogShow: {
+    addGoodsDialogShow: {
       type: Boolean,
       required: true,
       default: false
+    },
+    goodsId: {
+      type: String,
+      required: true,
+      default: ''
     }
   },
   data () {
@@ -57,7 +62,7 @@ export default {
       form: {
         dynamicForm: [{
           itemId: createUUID(),
-          brandName: ''
+          productName: ''
         }
         ]
       }
@@ -67,11 +72,11 @@ export default {
     addHandle () {
       this.form.dynamicForm.push({
         itemId: createUUID(),
-        brandName: ''
+        productName: ''
       })
     },
-    addDialogClose () {
-      this.$emit('addDialogClose', true)
+    addGoodsDialogClose () {
+      this.$emit('addGoodsDialogClose', true)
     },
     deleteDynamicItem (itemId) {
       if (this.form.dynamicForm.length < 2) {

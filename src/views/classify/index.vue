@@ -2,25 +2,25 @@
   <div class="page-wrap">
     <div class="title-select">
       <el-tabs v-model="tabActive"
-               class="tabs-wrap"
-               @tab-click="tabClick">
+               class="tabs-wrap">
         <el-tab-pane label="链接"
-                     name="link">
+                     name="Link">
           <span slot="label">链接</span>
         </el-tab-pane>
         <el-tab-pane label="品牌"
-                     name="brand">
+                     name="Brand">
           <span slot="label">品牌</span>
         </el-tab-pane>
         <el-tab-pane label="商品"
-                     name="commodity">
+                     name="Commodity">
           <span slot="label">商品</span>
         </el-tab-pane>
       </el-tabs>
     </div>
     <div class="content">
-      <!-- <Link /> -->
-      <Brand />
+      <keep-alive>
+        <component v-bind:is="tabActive"></component>
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -28,20 +28,25 @@
 // eslint-disable-next-line no-unused-vars
 import Link from './component/link'
 import Brand from './component/brand'
+import Commodity from './component/commodity'
 export default {
   components: {
-    // Link,
-    Brand
+    Link,
+    Brand,
+    Commodity
   },
   data () {
     return {
-      tabActive: ''
+      // currentTab: '',
+      tabActive: 'Link'
     }
   },
   methods: {
-    tabClick (tab, event) {
-      // this.$router.push(`/${tab.name}`)
-    }
+    // tabClick (tab, event) {
+    //   this.currentTab = tab.name
+    //   debugger
+    //   // this.$router.push(`/${tab.name}`)
+    // }
   }
 }
 </script>

@@ -16,13 +16,13 @@
           <div class="operate-btn-group">
             <span @click="editBrand(scope.row)">编辑</span>
             <el-divider direction="vertical"></el-divider>
+            <span @click="addGoods(scope.row)">添加商品</span>
+            <el-divider direction="vertical"></el-divider>
             <el-popconfirm @Confirm="deleteHandle"
                            placement="top"
                            title="确定删除吗？">
               <span slot="reference">删除</span>
             </el-popconfirm>
-            <el-divider direction="vertical"></el-divider>
-            <span>添加商品</span>
           </div>
         </template>
       </el-table-column>
@@ -38,6 +38,9 @@
     </el-pagination>
     <Add :addDialogShow="addDialogShow"
          @addDialogClose="addDialogClose" />
+    <AddGoods :addGoodsDialogShow="addGoodsDialogShow"
+              :goodsId="goodsId"
+              @addGoodsDialogClose="addGoodsDialogClose" />
     <Edit :editDialogShow="editDialogShow"
           :editForm="editForm"
           @editDialogClose="editDialogClose" />
@@ -47,19 +50,23 @@
 import tableMixin from '@/mixins/dealTable'
 import { brandData } from './data'
 import Add from '../component/brandDialog/add'
+import AddGoods from '../component/brandDialog/addGoods'
 import Edit from '../component/brandDialog/edit'
 export default {
   mixins: [tableMixin],
   components: {
     Add,
-    Edit
+    Edit,
+    AddGoods
   },
   data () {
     return {
       tableData: brandData,
       addDialogShow: false,
       editDialogShow: false,
+      addGoodsDialogShow: false,
       isShowTransition: false,
+      goodsId: '',
       checkList: [],
       editForm: {},
       checkListArr: [{
@@ -75,12 +82,19 @@ export default {
     addBrand () {
       this.addDialogShow = true
     },
+    addGoods (brand) {
+      this.goodsId = brand.brandId
+      this.addGoodsDialogShow = true
+    },
     editBrand (brand) {
       this.editForm = { ...brand }
       this.editDialogShow = true
     },
-    addDialogClose (flag) {
+    addDialogClose () {
       this.addDialogShow = false
+    },
+    addGoodsDialogClose () {
+      this.addGoodsDialogShow = false
     },
     editDialogClose () {
       this.editDialogShow = false
