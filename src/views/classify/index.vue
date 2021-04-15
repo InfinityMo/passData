@@ -18,14 +18,20 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <Link />
+    <div class="content">
+      <!-- <Link /> -->
+      <Brand />
+    </div>
   </div>
 </template>
 <script>
+// eslint-disable-next-line no-unused-vars
 import Link from './component/link'
+import Brand from './component/brand'
 export default {
   components: {
-    Link
+    // Link,
+    Brand
   },
   data () {
     return {
