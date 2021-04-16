@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrap">
-    <div class="flex-between-center">
+    <div class="flex-between-center table-title-wrap">
       <h4 class="table-title">品牌数据</h4>
       <el-button type="primary"
                  @click="addBrand">新增品牌</el-button>
@@ -11,6 +11,7 @@
                        prop="brandName">
       </el-table-column>
       <el-table-column label="操作"
+                       width="220px"
                        prop="operate">
         <template slot-scope="scope">
           <div class="operate-btn-group">
@@ -18,7 +19,7 @@
             <el-divider direction="vertical"></el-divider>
             <span @click="addGoods(scope.row)">添加商品</span>
             <el-divider direction="vertical"></el-divider>
-            <el-popconfirm @Confirm="deleteHandle"
+            <el-popconfirm @confirm="deleteHandle(scope.row)"
                            placement="top"
                            title="确定删除吗？">
               <span slot="reference">删除</span>
@@ -43,12 +44,13 @@
               @addGoodsDialogClose="addGoodsDialogClose" />
     <Edit :editDialogShow="editDialogShow"
           :editForm="editForm"
+          v-if="editDialogShow"
           @editDialogClose="editDialogClose" />
   </div>
 </template>
 <script>
 import tableMixin from '@/mixins/dealTable'
-import { brandData } from './data'
+// import { brandData } from './data'
 import Add from '../component/brandDialog/add'
 import AddGoods from '../component/brandDialog/addGoods'
 import Edit from '../component/brandDialog/edit'
@@ -61,7 +63,7 @@ export default {
   },
   data () {
     return {
-      tableData: brandData,
+      tableData: [],
       addDialogShow: false,
       editDialogShow: false,
       addGoodsDialogShow: false,
@@ -78,7 +80,22 @@ export default {
       }]
     }
   },
+  created () {
+    this.getTableData()
+  },
   methods: {
+    getTableData () {
+      const submitParams = {
+        ...this.PAGING
+      }
+      delete submitParams.total
+      this.$request.post('/brandpage', submitParams).then(res => {
+        if (res.data) {
+          this.tableData = res.data.result || []
+          this.PAGING.total = res.data.total
+        }
+      })
+    },
     addBrand () {
       this.addDialogShow = true
     },
@@ -90,21 +107,36 @@ export default {
       this.editForm = { ...brand }
       this.editDialogShow = true
     },
-    addDialogClose () {
+    addDialogClose (flag) {
       this.addDialogShow = false
+      if (flag) {
+        this.PAGING.pageNum = 1
+        this.getTableData()
+      }
     },
     addGoodsDialogClose () {
       this.addGoodsDialogShow = false
     },
-    editDialogClose () {
+    editDialogClose (flag) {
       this.editDialogShow = false
+      if (flag) {
+        this.getTableData()
+      }
     },
     resetFilter () {
       this.checkList = []
       this.isShowTransition = false
     },
-    deleteHandle () {
-
+    deleteHandle (row) {
+      this.$request.post('/branddelete', { brandId: row.brandId }).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this._isLastPage()
+          this.getTableData()
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
     },
     toggleIcon () {
       this.isShowTransition = !this.isShowTransition

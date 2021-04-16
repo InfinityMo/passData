@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-dialog title="编辑品牌"
+  <div class="commdity-edit">
+    <el-dialog title="编辑商品"
                custom-class="edit-pwd"
                :visible.sync="editDialogShow"
                :close-on-click-modal="false"
@@ -10,15 +10,32 @@
       <el-form :model="editForm"
                label-width="82px"
                ref="dynamicForm">
-        <el-form-item label="品牌名称："
-                      prop="brandName"
-                      :rules="{required: true, message: '品牌名称不能为空', trigger: 'blur'}"
+        <el-form-item label="商品名称："
+                      prop="productName"
+                      :rules="{required: true, message: '商品名称不能为空', trigger: 'blur'}"
                       class="form-item">
-          <el-input placeholder="请输入品牌名称"
-                    v-model="editForm.brandName"
-                    maxlength="20"
-                    show-word-limit>
+          <el-input placeholder="请输入商品名称"
+                    v-model="editForm.productName"
+                    resize="none"
+                    :autosize="{ minRows: 4, maxRows: 4}"
+                    type="textarea"
+                    show-word-limit
+                    maxlength="50">
           </el-input>
+        </el-form-item>
+        <el-form-item label="所属品牌："
+                      prop="brandName"
+                      :rules="{required: true, message: '请选择所属品牌', trigger: 'change'}"
+                      class="form-item">
+          <el-select placeholder="请选择所属品牌"
+                     popper-class="dialog-select"
+                     v-model="editForm.brandId">
+            <el-option v-for="item in brandOption"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer"
@@ -31,8 +48,9 @@
   </div>
 </template>
 <script>
-
+import linkMixin from '@/mixins/link'
 export default {
+  mixins: [linkMixin],
   props: {
     editDialogShow: {
       type: Boolean,
@@ -47,24 +65,48 @@ export default {
   },
   data () {
     return {
-
+      brandOption: []
     }
   },
+  created () {
+    this.getBrandData()
+  },
   methods: {
-
-    editDialogClose () {
-      this.$emit('editDialogClose', true)
+    getBrandData () {
+      this._getSelectData(0).then(res => {
+        if (res) {
+          this.brandOption = res
+        }
+      })
+    },
+    editDialogClose (flag) {
+      this.$emit('editDialogClose', flag)
     },
     confirmHandle () {
       this.$refs.dynamicForm.validate((valid, object) => {
         if (valid) {
-          debugger
+          this.submitHandle()
         } else {
           return false
         }
       })
+    },
+    submitHandle () {
+      this.$request.post('/productupdate', {
+        productId: this.editForm.productId,
+        brandId: this.editForm.brandId,
+        newName: this.editForm.productName
+      }).then(res => {
+        if (res) {
+          this.$message.success('保存成功')
+          this.editDialogClose(true)
+          //  this.$message.error('')
+        } else {
+          this.$message.error('保存失败')
+          this.editDialogClose(false)
+        }
+      })
     }
-
   }
 }
 </script>

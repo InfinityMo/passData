@@ -6,7 +6,7 @@
                :close-on-click-modal="false"
                :destroy-on-close="true"
                :before-close="editDialogClose"
-               width="452px">
+               width="432px">
       <el-form :model="editForm"
                label-width="82px"
                ref="dynamicForm">
@@ -51,20 +51,32 @@ export default {
     }
   },
   methods: {
-
-    editDialogClose () {
-      this.$emit('editDialogClose', true)
+    editDialogClose (flag) {
+      this.$emit('editDialogClose', flag)
     },
     confirmHandle () {
       this.$refs.dynamicForm.validate((valid, object) => {
         if (valid) {
-          debugger
+          this.submitHandle()
         } else {
           return false
         }
       })
+    },
+    submitHandle () {
+      this.$request.post('/brandupdate', {
+        brandId: this.editForm.brandId,
+        newName: this.editForm.brandName
+      }).then(res => {
+        if (res) {
+          this.$message.success('保存成功')
+          this.editDialogClose(true)
+        } else {
+          this.$message.error('保存失败')
+          this.editDialogClose(false)
+        }
+      })
     }
-
   }
 }
 </script>

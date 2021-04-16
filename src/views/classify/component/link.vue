@@ -1,6 +1,8 @@
 <template>
   <div class="page-wrap">
-    <h4 class="table-title">链接数据</h4>
+    <div class="flex-between-center table-title-wrap">
+      <h4 class="table-title">链接数据</h4>
+    </div>
     <el-table :data="tableData"
               class="cutomer-table">
       <el-table-column label="链接名称"
@@ -18,14 +20,20 @@
             <transition name="el-zoom-in-top">
               <div v-show="isShowTransition"
                    class="transition">
-                <div class="checkbox-wrap">
+                <div class="checkbox-wrap"
+                     tabindex="0"
+                     ref="transitionDiv">
                   <el-checkbox-group v-model="checkList">
                     <el-checkbox v-for="item in checkListArr"
                                  :key="item.value"
-                                 :label="item.label">
+                                 :label="item.value">
+                      {{item.label}}
                     </el-checkbox>
                   </el-checkbox-group>
-                  <p class="filter-btn"><span @click="resetFilter">重置</span><span>筛选</span></p>
+                  <p class="filter-btn">
+                    <span @click="resetFilter">重置</span>
+                    <span @click="filterData">筛选</span>
+                  </p>
                 </div>
               </div>
               {{scope.row}}
@@ -61,12 +69,12 @@
 </template>
 <script>
 import linkMixin from '@/mixins/link'
-import { linkData } from './data'
+// import { linkData } from './data'
 export default {
   mixins: [linkMixin],
   data () {
     return {
-      tableData: linkData,
+      tableData: [],
       isShowTransition: false,
       checkList: [],
       checkListArr: [{
@@ -78,22 +86,58 @@ export default {
       }]
     }
   },
+  created () {
+    this.getTableData()
+  },
   methods: {
+    getTableData () {
+      const submitParams = {
+        isClassify: this.checkList.join(','),
+        ...this.PAGING
+      }
+      delete submitParams.total
+      this.$request.post('/linklist', submitParams).then(res => {
+        if (res.data) {
+          this.tableData = res.data.result || []
+          this.PAGING.total = res.data.total
+        }
+      })
+    },
+    filterData () {
+      this.getTableData()
+      this.isShowTransition = false
+    },
     resetFilter () {
       this.checkList = []
+      this.getTableData()
       this.isShowTransition = false
     },
     toggleIcon () {
       this.isShowTransition = !this.isShowTransition
+      if (this.isShowTransition) {
+        this.$refs.transitionDiv.focus()
+      }
     },
     handleSizeChange (pageSize) {
       this.PAGING.pageSize = pageSize
       // 页数大小发生变化时，手动将当前页设置为1
       this.PAGING.pageNum = 1
+      this.getTableData()
     },
     handleCurrentChange (pageNum) {
       this.PAGING.pageNum = pageNum
+      this.getTableData()
     }
+    // divBlur () {
+    //   this.isShowTransition = false
+    //   this.$refs.transitionDiv.blur()
+    // },
+    // divFocus () {
+    //   this.isShowTransition = !this.isShowTransition
+    //   if (this.isShowTransition) {
+    //     this.$refs.transitionDiv.focus()
+    //   }
+    // }
   }
 }
 </script>

@@ -6,7 +6,7 @@
                :close-on-click-modal="false"
                :destroy-on-close="true"
                :before-close="addDialogClose"
-               width="452px">
+               width="432px">
       <el-form :model="form"
                label-width="82px"
                ref="dynamicForm">
@@ -70,8 +70,8 @@ export default {
         brandName: ''
       })
     },
-    addDialogClose () {
-      this.$emit('addDialogClose', true)
+    addDialogClose (flag) {
+      this.$emit('addDialogClose', flag)
     },
     deleteDynamicItem (itemId) {
       if (this.form.dynamicForm.length < 2) {
@@ -83,10 +83,29 @@ export default {
     confirmHandle () {
       this.$refs.dynamicForm.validate((valid, object) => {
         if (valid) {
-          debugger
+          this.submitHandle()
         } else {
           this.scrollView(object)
           return false
+        }
+      })
+    },
+    submitHandle () {
+      const nameArr = []
+      this.form.dynamicForm.forEach(item => {
+        nameArr.push(item.brandName)
+      })
+      const submitParams = {
+        brandList: nameArr.join(',')
+      }
+      this.$request.post('/brandcreate', submitParams).then(res => {
+        if (res.errorCode === 1) {
+          this.$message.success('保存成功')
+          this.addDialogClose(true)
+          //  this.$message.error('')
+        } else {
+          this.$message.error('保存失败')
+          this.addDialogClose(false)
         }
       })
     },

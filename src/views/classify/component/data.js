@@ -73,3 +73,13 @@ export const brandData = [{
   brandId: '2',
   brandName: '碧柔'
 }]
+
+export const commodityData = [{
+  brandName: '蜜浓',
+  productId: '1',
+  productName: '蜜浓氨基酸滋润保湿啫蜜浓氨基酸滋润保湿啫蜜浓氨基酸滋润保湿啫蜜浓氨基酸滋润保湿啫蜜浓氨基酸滋润保湿啫'
+}, {
+  brandName: '碧柔',
+  productId: '2',
+  productName: '碧柔氨基酸滋润保湿啫喱面膜22ml*4片日本原装进口护肤补水'
+}]

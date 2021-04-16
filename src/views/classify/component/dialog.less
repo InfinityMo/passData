@@ -20,3 +20,47 @@
     top: 10px;
   }
 }
+
+.transfer-wrap {
+  /deep/ .el-transfer-panel {
+    width: calc((100% - 76px)/2);
+    border-radius: 2px;
+
+    .el-transfer-panel__header {
+      height: 38px;
+      line-height: 38px;
+      background-color: #fff;
+
+      .el-checkbox__label {
+        font-size: 14px;
+        color: #333;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  /deep/.el-transfer-panel__item.el-checkbox {
+    .el-checkbox__label {
+      overflow: auto;
+    }
+  }
+
+  /deep/ .el-transfer-panel__filter {
+    .el-input__inner {
+      border-radius: 2px;
+    }
+  }
+
+  /deep/.el-transfer__buttons {
+    padding: 0 15px;
+
+    button {
+      display: block;
+      margin: 0 0 4px 0;
+    }
+
+    button:nth-child(2) {
+      margin: 4px 0 0 0;
+    }
+  }
+}

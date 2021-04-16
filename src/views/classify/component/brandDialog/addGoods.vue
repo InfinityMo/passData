@@ -6,7 +6,7 @@
                :close-on-click-modal="false"
                :destroy-on-close="true"
                :before-close="addGoodsDialogClose"
-               width="966px">
+               width="980px">
       <el-form :model="form"
                label-width="82px"
                ref="dynamicForm">
@@ -20,7 +20,7 @@
                         class="form-item">
             <el-input placeholder="请输入商品名称"
                       v-model="dynamicItem.productName"
-                      maxlength="20"
+                      maxlength="50"
                       show-word-limit>
             </el-input>
           </el-form-item>
@@ -52,7 +52,7 @@ export default {
       default: false
     },
     goodsId: {
-      type: String,
+      type: [String, Number],
       required: true,
       default: ''
     }
@@ -88,10 +88,30 @@ export default {
     confirmHandle () {
       this.$refs.dynamicForm.validate((valid, object) => {
         if (valid) {
-          debugger
+          this.submitHandle()
         } else {
           this.scrollView(object)
           return false
+        }
+      })
+    },
+    submitHandle () {
+      const nameArr = []
+      this.form.dynamicForm.forEach(item => {
+        nameArr.push(item.productName)
+      })
+      const submitParams = {
+        brandId: this.goodsId,
+        productList: nameArr.join(',')
+      }
+      this.$request.post('/productcreate', submitParams).then(res => {
+        if (res.errorCode === 1) {
+          this.$message.success('保存成功')
+          this.addGoodsDialogClose()
+          //  this.$message.error('')
+        } else {
+          this.$message.error('保存失败')
+          this.addGoodsDialogClose()
         }
       })
     },

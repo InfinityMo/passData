@@ -1,10 +1,12 @@
 <template>
   <div class="page-wrap">
-    <h4 class="table-title">商品数据</h4>
+    <div class="flex-between-center table-title-wrap">
+      <h4 class="table-title">商品数据</h4>
+    </div>
     <el-table :data="tableData"
               class="cutomer-table">
       <el-table-column label="商品名称"
-                       width="400"
+                       width="700"
                        :show-overflow-tooltip="true"
                        prop="productName">
       </el-table-column>
@@ -22,7 +24,8 @@
                   <el-checkbox-group v-model="checkList">
                     <el-checkbox v-for="item in checkListArr"
                                  :key="item.value"
-                                 :label="item.label">
+                                 :label="item.value">
+                      {{item.label}}
                     </el-checkbox>
                   </el-checkbox-group>
                   <p class="filter-btn"><span @click="resetFilter">重置</span><span>筛选</span></p>
@@ -34,14 +37,15 @@
         </template>
       </el-table-column>
       <el-table-column label="操作"
+                       width="220px"
                        prop="operate">
         <template slot-scope="scope">
           <div class="operate-btn-group">
-            <span @click="editBrand(scope.row)">编辑</span>
+            <span @click="edit(scope.row)">编辑</span>
             <el-divider direction="vertical"></el-divider>
-            <span @click="addGoods(scope.row)">配置链接</span>
+            <span @click="configLink(scope.row)">配置链接</span>
             <el-divider direction="vertical"></el-divider>
-            <el-popconfirm @Confirm="deleteHandle"
+            <el-popconfirm @confirm="deleteHandle(scope.row)"
                            placement="top"
                            title="确定删除吗？">
               <span slot="reference">删除</span>
@@ -59,28 +63,97 @@
                    :page-size="PAGING.pageSize"
                    :total="PAGING.total">
     </el-pagination>
+    <Edit :editDialogShow="editDialogShow"
+          v-if="editDialogShow"
+          :editForm="editForm"
+          @editDialogClose="editDialogClose" />
+    <ConfigLink :classifyList="classifyList"
+                :allLinkData="allLinkData"
+                :productId="productId"
+                v-if="configDialogShow"
+                :configDialogShow="configDialogShow"
+                @configDialogClose="configDialogClose" />
   </div>
 </template>
 <script>
 import linkMixin from '@/mixins/link'
-import { linkData } from './data'
+import { commodityData } from './data'
+import Edit from '../component/commodityDialog/edit'
+import ConfigLink from '../component/commodityDialog/configLink'
 export default {
+  components: {
+    Edit,
+    ConfigLink
+  },
   mixins: [linkMixin],
   data () {
     return {
-      tableData: linkData,
+      tableData: commodityData,
       isShowTransition: false,
+      editDialogShow: false,
+      configDialogShow: false,
+      editForm: {},
       checkList: [],
-      checkListArr: [{
-        value: '0',
-        label: '未分类'
-      }, {
-        value: '1',
-        label: '已分类'
-      }]
+      classifyList: [],
+      allLinkData: [],
+      productId: '',
+      checkListArr: []
     }
   },
+  created () {
+    this._getSelectData(0).then(res => {
+      this.checkListArr = res
+      this.getTableData()
+    })
+  },
   methods: {
+    getTableData () {
+      const submitParams = {
+        brandId: this.checkList.join(','),
+        ...this.PAGING
+      }
+      delete submitParams.total
+      this.$request.post('/productpage', submitParams).then(res => {
+        if (res.data) {
+          this.tableData = res.data.result || []
+          this.PAGING.total = res.data.total
+        }
+      })
+    },
+    edit (product) {
+      this.editForm = { ...product }
+      this.editDialogShow = true
+    },
+    configLink (row) {
+      this.$request.post('/productsetwindow', { productId: row.productId }).then(res => {
+        if (res) {
+          this.configDialogShow = true
+          this.productId = row.productId
+          this.allLinkData = res.data.unclassifyList
+          this.classifyList = res.data.classifyList
+        }
+      })
+    },
+    deleteHandle (row) {
+      this.$request.post('/productdelete', { productId: row.productId }).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this._isLastPage()
+          this.getTableData()
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    },
+    editDialogClose (flag) {
+      this.editDialogShow = false
+      if (flag) {
+        this.getTableData()
+      }
+    },
+    configDialogClose () {
+      this.configDialogShow = false
+    },
     resetFilter () {
       this.checkList = []
       this.isShowTransition = false
