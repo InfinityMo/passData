@@ -22,7 +22,8 @@
                    class="transition">
                 <div class="checkbox-wrap"
                      tabindex="0"
-                     ref="transitionDiv">
+                     ref="transitionDiv"
+                     @blur="divBlur">
                   <el-checkbox-group v-model="checkList">
                     <el-checkbox v-for="item in checkListArr"
                                  :key="item.value"
@@ -76,6 +77,7 @@ export default {
     return {
       tableData: [],
       isShowTransition: false,
+      checkChange: false,
       checkList: [],
       checkListArr: [{
         value: '0',
@@ -84,6 +86,15 @@ export default {
         value: '1',
         label: '已分类'
       }]
+    }
+  },
+  watch: {
+    checkList: {
+      handler: function (newValue, oldValue) {
+        this.checkChange = true
+        this.isShowTransition = true
+      },
+      deep: true
     }
   },
   created () {
@@ -115,7 +126,9 @@ export default {
     toggleIcon () {
       this.isShowTransition = !this.isShowTransition
       if (this.isShowTransition) {
-        this.$refs.transitionDiv.focus()
+        this.$nextTick(() => {
+          this.$refs.transitionDiv.focus()
+        })
       }
     },
     handleSizeChange (pageSize) {
@@ -127,11 +140,21 @@ export default {
     handleCurrentChange (pageNum) {
       this.PAGING.pageNum = pageNum
       this.getTableData()
+    },
+    divBlur () {
+      this.$refs.transitionDiv.blur()
+      setTimeout(() => {
+        if (!this.checkChange) {
+          this.isShowTransition = false
+        }
+      })
+      // if (!this.isShowTransition) {
+      //   setTimeout(() => {
+      //     this.isShowTransition = false
+      //   })
+      // }
+      this.checkChange = false
     }
-    // divBlur () {
-    //   this.isShowTransition = false
-    //   this.$refs.transitionDiv.blur()
-    // },
     // divFocus () {
     //   this.isShowTransition = !this.isShowTransition
     //   if (this.isShowTransition) {
