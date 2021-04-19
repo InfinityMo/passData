@@ -75,7 +75,7 @@ const mixins = {
             const month = pickDate.getMonth() + 1
             const day = pickDate.getDate()
             let maxYear = year
-            let maxMonth = month + 2
+            let maxMonth = month + 3
             if (maxMonth > 12) {
               maxYear = year + 1
               maxMonth -= 12
@@ -86,7 +86,6 @@ const mixins = {
               minYear = year - 1
               minMonth += 12
             }
-            // debugger
             const pickYear1 = new Date(`${maxYear}-${maxMonth}-${day}`).getTime()
             const pickYear2 = new Date(`${minYear}-${minMonth}-${day}`).getTime()
 
@@ -94,10 +93,10 @@ const mixins = {
             // if (month > 12) {
             //   year += 1
             // }
-            let maxTime = this.pickerThreeRangeMonth + pickYear1
-            const minTime = this.pickerThreeRangeMonth - pickYear2
-            if (maxTime > new Date()) {
-              maxTime = new Date()
+            let maxTime = pickYear1
+            const minTime = pickYear2
+            if (maxTime > new Date().getTime()) {
+              maxTime = new Date().getTime()
             }
             return (time && time.getTime() >= maxTime) || (time && time.getTime() <= minTime)
           }
