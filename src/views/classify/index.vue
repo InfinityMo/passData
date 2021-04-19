@@ -18,9 +18,7 @@
       </el-tabs>
     </div>
     <div class="content">
-      <keep-alive>
-        <component v-bind:is="tabActive"></component>
-      </keep-alive>
+      <component v-bind:is="tabActive"></component>
     </div>
   </div>
 </template>

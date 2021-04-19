@@ -13,12 +13,6 @@
 
 .row-item {
   position: relative;
-
-  .delete-ico {
-    position: absolute;
-    right: -20px;
-    top: 10px;
-  }
 }
 
 .transfer-wrap {
@@ -35,13 +29,22 @@
         font-size: 14px;
         color: #333;
         vertical-align: middle;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 80%;
       }
     }
   }
 
   /deep/.el-transfer-panel__item.el-checkbox {
+    height: auto;
+
     .el-checkbox__label {
       overflow: auto;
+      word-break: break-all;
+      white-space: normal;
+      display: block;
     }
   }
 
@@ -63,4 +66,25 @@
       margin: 4px 0 0 0;
     }
   }
+}
+
+// icon
+.add-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+  width: 14px;
+  height: 14px;
+}
+
+
+.delete-icon {
+  position: absolute;
+  right: -25px;
+  top: 13px;
+  display: inline-block;
+  vertical-align: middle;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
 }

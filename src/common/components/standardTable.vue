@@ -4,19 +4,20 @@
               :row-key="randomKey"
               class="standard-table">
       <el-table-column v-for="column in columns"
+                       :show-overflow-tooltip="true"
                        :key="column.dataKey"
                        :label="column.title"
                        :align="column.align||''"
                        :fixed="column.fixed"
                        :width="column.width">
-        <template slot="header"
+        <!-- <template slot="header"
                   slot-scope="scope"
                   v-if="column.columnRender">
           <operate :render="column.columnRender"
                    :row="scope.row"
                    :column="column">
           </operate>
-        </template>
+        </template> -->
         <template slot-scope="scope">
           <operate v-if="column.render"
                    :render="column.render"

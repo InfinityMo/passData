@@ -24,13 +24,13 @@
                       show-word-limit>
             </el-input>
           </el-form-item>
-          <i class="el-icon-delete-solid delete-ico"
+          <i class="delete-icon delete-ico"
              @click="deleteDynamicItem(dynamicItem.itemId)"></i>
         </el-row>
         <el-form-item>
-          <div class="add-wrap"
+          <div class="add-wrap flex-item-center flex-center"
                v-if="form.dynamicForm.length<30"
-               @click="addHandle">添加商品</div>
+               @click="addHandle"><i class="add-icon"></i><span>添加商品</span></div>
         </el-form-item>
       </el-form>
       <span slot="footer"

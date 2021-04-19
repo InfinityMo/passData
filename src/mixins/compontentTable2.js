@@ -2,7 +2,6 @@
 const compontentTable = {
   data () {
     return {
-
     }
   },
   computed: {
@@ -10,11 +9,16 @@ const compontentTable = {
   },
   methods: {
     _setFixed (key, columnLength) {
+      const clientHeight = document.documentElement.clientWidth || document.body.clientWidth
+      if (clientHeight < 1920) {
+        return key === 'groupName' ? 'left' : ''
+      } else {
+        return columnLength > 9 ? key === 'groupName' ? 'left' : '' : ''
+      }
       // const clientHeight = document.documentElement.clientWidth || document.body.clientWidth
-      return columnLength > 7 ? key === 'groupName' ? 'left' : '' : ''
     },
     _setWidth (key, columnLength, type) {
-      // const clientHeight = document.documentElement.clientWidth || document.body.clientWidth
+      const clientHeight = document.documentElement.clientWidth || document.body.clientWidth
       let width = ''
       if (key === 'groupName') {
         // type&&type==='product'
@@ -33,7 +37,11 @@ const compontentTable = {
         width = '160'
         return width
       }
-      width = '130'
+      if (clientHeight < 1920) {
+        width = '130'
+      } else {
+        width = columnLength > 9 ? '130' : ''
+      }
       return width
     },
     _setAlign (item) {

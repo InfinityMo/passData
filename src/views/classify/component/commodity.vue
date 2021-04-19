@@ -16,11 +16,13 @@
                   slot-scope="scope">
           <div class="check-column">
             <span class="status"
-                  @click="toggleIcon">品牌<i class="el-icon-arrow-down"></i></span>
+                  @click="toggleIcon">品牌<i class="arrow-down-icon"></i></span>
             <transition name="el-zoom-in-top">
               <div v-show="isShowTransition"
                    class="transition">
-                <div class="checkbox-wrap">
+                <div class="checkbox-wrap checkbox-wrap-brand"
+                     @mouseenter="checkGroupEnter"
+                     @mouseleave.prevent="checkGroupLeave">
                   <el-checkbox-group v-model="checkList">
                     <el-checkbox v-for="item in checkListArr"
                                  :key="item.value"
@@ -28,7 +30,7 @@
                       {{item.label}}
                     </el-checkbox>
                   </el-checkbox-group>
-                  <p class="filter-btn"><span @click="resetFilter">重置</span><span>筛选</span></p>
+                  <p class="filter-btn"><span @click="resetFilter">重置</span><span @click="filterData">筛选</span></p>
                 </div>
               </div>
               {{scope.row}}
@@ -69,7 +71,7 @@
           @editDialogClose="editDialogClose" />
     <ConfigLink :classifyList="classifyList"
                 :allLinkData="allLinkData"
-                :productId="productId"
+                :configForm="configForm"
                 v-if="configDialogShow"
                 :configDialogShow="configDialogShow"
                 @configDialogClose="configDialogClose" />
@@ -96,7 +98,7 @@ export default {
       checkList: [],
       classifyList: [],
       allLinkData: [],
-      productId: '',
+      configForm: {},
       checkListArr: []
     }
   },
@@ -109,7 +111,7 @@ export default {
   methods: {
     getTableData () {
       const submitParams = {
-        brandId: this.checkList.join(','),
+        brandList: this.checkList.join(','),
         ...this.PAGING
       }
       delete submitParams.total
@@ -128,7 +130,8 @@ export default {
       this.$request.post('/productsetwindow', { productId: row.productId }).then(res => {
         if (res) {
           this.configDialogShow = true
-          this.productId = row.productId
+          this.configForm = { ...row }
+          // this.productId = row.productId
           this.allLinkData = res.data.unclassifyList
           this.classifyList = res.data.classifyList
         }
@@ -154,12 +157,23 @@ export default {
     configDialogClose () {
       this.configDialogShow = false
     },
+    filterData () {
+      this.getTableData()
+      this.isShowTransition = false
+    },
     resetFilter () {
       this.checkList = []
+      this.getTableData()
       this.isShowTransition = false
     },
     toggleIcon () {
       this.isShowTransition = !this.isShowTransition
+    },
+    checkGroupEnter () {
+      this.isShowTransition = true
+    },
+    checkGroupLeave () {
+      this.isShowTransition = false
     },
     handleSizeChange (pageSize) {
       this.PAGING.pageSize = pageSize

@@ -8,7 +8,7 @@
                highlight-current-row
                :merge-cells="mergeCells"
                :footer-method="tableSummaries"
-               show-footer
+               :show-footer="this.tableData.length>0"
                :scroll-x="{enabled: false}"
                ref="xTable"
                :max-height="calcHeight">
@@ -58,6 +58,18 @@ export default {
       mergeCells: []
     }
   },
+  watch: {
+    form: {
+      handler (val, oldval) {
+        this.getColumns().then(res => {
+          if (res) {
+            this.getTableData()
+          }
+        })
+      },
+      deep: true
+    }
+  },
   computed: {
     calcHeight () {
       let height = 0
@@ -94,6 +106,7 @@ export default {
       })
     },
     setColumn (column) {
+      // debugger
       column.forEach(item => {
         this.columns.push({
           fieldName: item.key,

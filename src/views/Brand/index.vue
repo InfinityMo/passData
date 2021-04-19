@@ -10,7 +10,7 @@
                    label-width="90px">
             <el-col :span="8">
               <el-form-item label="品牌选择："
-                            prop="dataType">
+                            prop="groupList">
                 <el-select placeholder="请选择品牌"
                            multiple
                            collapse-tags
@@ -43,7 +43,7 @@
             <el-col :span="8"
                     class="search-btn">
               <el-form-item>
-                <el-button @click="_resetForm('searchForm')">重置</el-button>
+                <el-button @click="_resetForm('searchForm','1')">重置</el-button>
                 <el-button type="primary"
                            @click="searchHandle">查询</el-button>
               </el-form-item>
@@ -53,53 +53,27 @@
         <div class="table-wrap"
              ref="table">
           <div class="flex-between-center table-info">
-            <!-- <div class="flex-item-center">
-              <p class="select-tip"
-                 v-show="timeTypeSelect!==''||shopSelect!==''"><span>{{timeTypeSelect}}</span><em v-show="timeTypeSelect!==''&&shopSelect!==''">，</em><span>{{shopSelect}}</span></p>
-            </div> -->
+            <div class="flex-item-center">
+              <h4>品牌分析</h4>
+            </div>
             <div class="btn-gather">
               <el-button type="primary"
                          @click="downTable"><i class="export-icon"></i>下载报表</el-button>
             </div>
           </div>
-          <!-- <Table :form="submitForm"
-                 @monthDialog="openMonthDialog"
-                 @tableRender="tableRender" /> -->
-          <!-- <Table /> -->
           <Vtable @tableRender="tableRender"
                   :form="submitForm" />
         </div>
       </div>
     </div>
-    <!-- <el-dialog custom-class="journal-dialog"
-               :class="{'confirm-cover-dialog':confirmCover}"
-               width="1000px"
-               top="40px"
-               :modal="true"
-               v-if="monthDataShow"
-               :visible.sync="monthDataShow">
-      <div slot="title">
-        <span>{{monthDialogTitle}}</span>
-        <em v-show="monthDialogTitle!==''&&shopSelect!==''">，</em>
-        <span>{{shopSelect}}</span>
-      </div>
-      <Table :form="monthForm"
-             :monthDialogBoolean="true"
-             :userPowerArr="userPowerArr"
-             @confirmCoverDialog="confirmCoverDialog"
-             @tableRender="dialogTableRender" />
-    </el-dialog> -->
   </div>
 </template>
 <script>
-import axios from 'axios'
 import { mapGetters, mapMutations } from 'vuex'
 import tableMixin from '@/mixins/dealTable'
-import { monthSpliceDay } from '@/common/utils/timeCalc'
+import { monthSpliceDay, prevThreeMonth } from '@/common/utils/timeCalc'
 import { scrollTo } from '@/common/utils/funcStore'
 import watermark from '@/common/utils/watermark'
-// import Table from '../index/table'
-// import Vtable from '@/components/Vtable'
 import Vtable from '@/components/Vxtable'
 import { searchForm } from './formData'
 export default {
@@ -110,52 +84,22 @@ export default {
   },
   data () {
     return {
-      // userPowerArr: [],
       searchForm: JSON.parse(JSON.stringify(searchForm)),
       submitForm: {
         start: '',
         end: '',
         dateTime: [], // 日期
-        brandId: [] // 品牌
+        groupList: [] // 品牌
       },
+      downForm: {},
       // 品牌
       brandOptions: []
     }
   },
-  watch: {
-    'searchForm.shop': {
-      deep: true,
-      handler: function (newVal, oldVal) {
-        this.SAVESHOPID(newVal)
-      }
-    }
-  },
   computed: {
     ...mapGetters({
-      userData: 'getUserData',
-      userPower: 'getUserPower'
+      userData: 'getUserData'
     })
-    // userPowerArr () {
-    //   let userPowerArray = []
-    //   Object.keys(this.userPower).map(i => {
-    //     userPowerArray = this.userPower[i]
-    //   })
-    //   // userPowerArray = [2, 3, 4]
-    //   return userPowerArray
-    // }
-    // searchBtnAbled () {
-    //   let isAbled = true
-    //   const judgeForm = {
-    //     timeType: String(this.searchForm.timeType),
-    //     time: this.searchForm.timeType === 3 ? this.searchForm.month : this.timeSection || [], // 日期
-    //     shop: String(this.searchForm.shop),
-    //     dataType: this.searchForm.dataType
-    //   }
-    //   isAbled = Object.keys(judgeForm).every(item => {
-    //     return judgeForm[item].length > 0
-    //   })
-    //   return !isAbled
-    // }
   },
   created () {
     this.getSelectData()
@@ -176,24 +120,10 @@ export default {
       })
     },
     searchHandle () {
-      this.searchClick = true
-      const dataTypeArr = []
-      this.searchForm.dataType.map(i => {
-        dataTypeArr.push(i[1] || '')
-      })
-      this.submitForm = Object.assign({}, {
-        timeType: this.searchForm.timeType,
-        startDate: this.timeSection[0] || this.fromatMonth()[0],
-        endDate: this.timeSection[1] || this.fromatMonth()[1],
-        shop: this.searchForm.shop,
-        dataType: dataTypeArr.join() || ''
-      })
-      if (this.submitForm.timeType === 7) {
-        this.submitForm.startDate = monthSpliceDay(this.submitForm.startDate)[0]
-        this.submitForm.endDate = monthSpliceDay(this.submitForm.endDate)[1]
-      }
-      this.cacheTimeSection = [...this.timeSection]
-      this.cacheMonth = this.searchForm.month || ''
+      this.submitForm = { ...this.searchForm }
+      this.submitForm.start = monthSpliceDay(this.searchForm.dateTime[0])[0]
+      this.submitForm.end = monthSpliceDay(this.searchForm.dateTime[1])[1]
+      this.downForm = { ...this.searchForm }
     },
     tableRender (flag) {
       this.$nextTick(() => {
@@ -206,96 +136,21 @@ export default {
       })
     },
     setMonthTime () {
-      this.searchForm.dateTime = ['2021-02', '2021-04']
-      this.submitForm.start = '2021-02-01'
-      this.submitForm.end = '2021-04-13'
-    },
-    // 下载模板
-    downMold () {
-      const src = `${process.env.VUE_APP_API}/mold?user=${this.userData.staffId || ''}&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}`
-      location.href = src
+      this.searchForm.dateTime = prevThreeMonth()
+      this.submitForm.start = this.searchForm.dateTime[0]
+      this.submitForm.end = this.searchForm.dateTime[1]
+      this.downForm = { ...this.searchForm }
     },
     // 下载报表
     downTable () {
-      const dataTypeArr = []
-      this.searchForm.dataType.map(i => {
-        dataTypeArr.push(i[1] || '')
-      })
       const downForm = Object.assign({}, {
-        timeType: this.searchForm.timeType,
-        startDate: this.timeSection[0] || this.fromatMonth()[0],
-        endDate: this.timeSection[1] || this.fromatMonth()[1],
-        shop: this.searchForm.shop,
-        dataType: dataTypeArr.join() || ''
+        ...this.downForm,
+        groupList: this.downForm.groupList ? this.downForm.groupList.join(',') : '',
+        start: this.downForm.dateTime[0],
+        end: this.downForm.dateTime[1]
       })
-      if (downForm.timeType === 7) {
-        downForm.startDate = monthSpliceDay(downForm.startDate)[0]
-        downForm.endDate = monthSpliceDay(downForm.endDate)[1]
-      }
-      const src = `${process.env.VUE_APP_API}/export?timeType=${downForm.timeType}&startDate=${downForm.startDate}&endDate=${downForm.endDate}&shop=${downForm.shop}&dataType=${downForm.dataType}&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
+      const src = `${process.env.VUE_APP_API}/groupdownload?brandId=${downForm.groupList}&start=${downForm.start}&end=${downForm.end}&shop=${downForm.shop}&type=0&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
       location.href = src
-    },
-    // 上传
-    uploadHandel () {
-      const { fileList } = this
-      const formData = new FormData()
-      fileList.forEach(file => {
-        formData.append('file', file)
-      })
-      const submitUrl = `${process.env.VUE_APP_API}/import`
-      this.$store.commit('SETSPINNING', true)
-      axios.request({
-        url: submitUrl,
-        method: 'post',
-        data: formData,
-        timeout: 30000,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          trackId: this.$store.state.trackId || '',
-          permissionsCode: this.$store.state.permissionsCode || '',
-          user: this.$store.state.userData.staffId || ''
-        }
-      }).then(res => {
-        this.$store.commit('SETSPINNING', false)
-        this.fileList = []
-        if (res.data.errorCode === 1) {
-          this.$message.success('导入成功，汇总数据显示可能会有延迟')
-          const msgArr = res.data.data || []
-          if (msgArr && msgArr.length > 0) {
-            let tipMsg = ''
-            msgArr.forEach(i => {
-              tipMsg += `<p><span class="tool">${i.tool}</span><span class="date">${i.date}</span>数据有误</p>`
-            })
-            tipMsg = `<div class="import-tip-content">${tipMsg}</div>`
-            setTimeout(() => {
-              this.$alert(tipMsg, '以下数据有误，未能成功导入', {
-                customClass: 'import-tip',
-                dangerouslyUseHTMLString: true
-              })
-            }, 500)
-          }
-        } else if (res.data.errorCode === -1) {
-          this.$message.error('文件上传失败')
-        } else if (res.data.errorCode === 103) {
-          this.$message.error('文件名称不正确，请检查文件')
-        } else if (res.data.errorCode === 104) {
-          this.$message.error('文件内容不正确，请检查文件')
-        } else if (res.data.errorCode === 1003) {
-          this.$message.warning('用户身份信息过期，请重新登录')
-          setTimeout(() => {
-            sessionStorage.removeItem('userData')
-            this.$store.dispatch('resetUSerInfo')
-            // 跳转登录
-            sessionStorage.clear()
-            this.$router.go(0)
-          }, 1500)
-        } else if (res.data.errorCode === 1004) {
-          this.$message.warning('上传权限不足，请联系管理员')
-        }
-      }).catch(res => {
-        this.$message.error('上传失败，请重新上传')
-        this.$store.commit('SETSPINNING', false)
-      })
     }
   }
 }

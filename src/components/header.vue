@@ -292,7 +292,7 @@ export default {
         this.$store.commit('SETSPINNING', false)
         this.fileList = []
         if (res.data.errorCode === 1) {
-          this.$message.success('导入成功')
+          this.$message.success('导入成功，数据更新会有延迟')
           const msgArr = res.data.data || []
           if (msgArr && msgArr.length > 0) {
             let tipMsg = ''

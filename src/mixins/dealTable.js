@@ -1,5 +1,5 @@
-import { getLastSevenDay, getLastThirtyDay, prevWeek, prevYear, recentYear, monthSpliceDay } from '../common/utils/timeCalc'
-import { createUUID } from '../common/utils/funcStore'
+import { getLastSevenDay, getLastThirtyDay, prevWeek, prevYear, recentYear, monthSpliceDay, prevThreeMonth } from '../common/utils/timeCalc'
+// import { createUUID } from '../common/utils/funcStore'
 const mixins = {
   data () {
     return {
@@ -25,7 +25,7 @@ const mixins = {
             let maxTime = this.pickerMinDate + thirtyDay
             const minTime = this.pickerMinDate - thirtyDay
             if (maxTime > new Date()) {
-              maxTime = new Date()
+              maxTime = new Date() - 1 * 24 * 3600 * 1000
             }
             return time.getTime() > maxTime || time.getTime() < minTime
           }
@@ -102,39 +102,6 @@ const mixins = {
           }
           return time && time.getTime() > Date.now()
         }
-      }
-    }
-  },
-  computed: {
-    timeDisabled () {
-      let flag = true
-      this.searchForm.timeType === 0 ? flag = false : flag = true
-      return flag
-    },
-    timeTypeSelect () {
-      if (this.submitForm.timeType === 0 || this.submitForm.timeType === 7 || this.submitForm.timeType === 3) {
-        if (this.submitForm.timeType === 0 || this.submitForm.timeType === 7) {
-          return this.cacheTimeSection.length > 0 ? `${this.cacheTimeSection[0]}~${this.cacheTimeSection[1]}` : ''
-        } else {
-          return this.searchForm.month || this.cacheMonth
-        }
-      } else {
-        const target = this.timeTypeArr.filter(i => i.value === this.submitForm.timeType)
-        return target.length > 0 ? target[0].label : ''
-      }
-    },
-    shopSelect () {
-      const target = this.shopArr.filter(i => i.value === this.submitForm.shop)
-      return target.length > 0 ? target[0].label : ''
-    }
-
-  },
-  watch: {
-    'timeSection' (newVal, oldVal) {
-      // 清除时，重置月度范围选择控件
-      if (this.searchForm.timeType === 7 && !newVal) {
-        this.monthRangeRadomLey = createUUID()
-        this.pickerRangeMonth = ''
       }
     }
   },
@@ -258,9 +225,13 @@ const mixins = {
         }
       }
     },
-    _resetForm (formName) {
+    _resetForm (formName, type) {
       this.$refs[formName].resetFields()
-      this.searchForm.dateTime = getLastSevenDay()
+      if (type) {
+        this.searchForm.dateTime = prevThreeMonth()
+      } else {
+        this.searchForm.dateTime = getLastSevenDay()
+      }
     }
   }
 }

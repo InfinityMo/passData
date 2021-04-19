@@ -119,9 +119,6 @@ export default {
         this.getTableData()
       }
     })
-    // console.log(this.form)
-    // this.setColumn()
-    // this.setTableData()
   },
   mounted () {
     // 当前窗口变化

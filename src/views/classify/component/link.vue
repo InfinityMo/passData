@@ -16,21 +16,22 @@
                   slot-scope="scope">
           <div class="check-column">
             <span class="status"
-                  @click="toggleIcon">状态<i class="el-icon-arrow-down"></i></span>
+                  @click="toggleIcon">状态<i class="arrow-down-icon"></i></span>
             <transition name="el-zoom-in-top">
               <div v-show="isShowTransition"
                    class="transition">
                 <div class="checkbox-wrap"
-                     tabindex="0"
-                     ref="transitionDiv"
-                     @blur="divBlur">
-                  <el-checkbox-group v-model="checkList">
-                    <el-checkbox v-for="item in checkListArr"
-                                 :key="item.value"
-                                 :label="item.value">
-                      {{item.label}}
-                    </el-checkbox>
-                  </el-checkbox-group>
+                     @mouseenter="checkGroupEnter"
+                     @mouseleave.prevent="checkGroupLeave">
+                  <div>
+                    <el-checkbox-group v-model="checkList">
+                      <el-checkbox v-for="item in checkListArr"
+                                   :key="item.value"
+                                   :label="item.value">
+                        {{item.label}}
+                      </el-checkbox>
+                    </el-checkbox-group>
+                  </div>
                   <p class="filter-btn">
                     <span @click="resetFilter">重置</span>
                     <span @click="filterData">筛选</span>
@@ -70,6 +71,7 @@
 </template>
 <script>
 import linkMixin from '@/mixins/link'
+// import { createUUID } from '@/common/utils/funcStore'
 // import { linkData } from './data'
 export default {
   mixins: [linkMixin],
@@ -77,7 +79,7 @@ export default {
     return {
       tableData: [],
       isShowTransition: false,
-      checkChange: false,
+      checkEnter: false,
       checkList: [],
       checkListArr: [{
         value: '0',
@@ -89,16 +91,17 @@ export default {
     }
   },
   watch: {
-    checkList: {
-      handler: function (newValue, oldValue) {
-        this.checkChange = true
-        this.isShowTransition = true
-      },
-      deep: true
-    }
+    // checkList: {
+    //   handler: function (newValue, oldValue) {
+    //     this.checkChange = true
+    //     this.isShowTransition = true
+    //   },
+    //   deep: true
+    // }
   },
   created () {
     this.getTableData()
+    this.checkList = []
   },
   methods: {
     getTableData () {
@@ -125,11 +128,12 @@ export default {
     },
     toggleIcon () {
       this.isShowTransition = !this.isShowTransition
-      if (this.isShowTransition) {
-        this.$nextTick(() => {
-          this.$refs.transitionDiv.focus()
-        })
-      }
+    },
+    checkGroupEnter () {
+      this.isShowTransition = true
+    },
+    checkGroupLeave () {
+      this.isShowTransition = false
     },
     handleSizeChange (pageSize) {
       this.PAGING.pageSize = pageSize
@@ -140,27 +144,7 @@ export default {
     handleCurrentChange (pageNum) {
       this.PAGING.pageNum = pageNum
       this.getTableData()
-    },
-    divBlur () {
-      this.$refs.transitionDiv.blur()
-      setTimeout(() => {
-        if (!this.checkChange) {
-          this.isShowTransition = false
-        }
-      })
-      // if (!this.isShowTransition) {
-      //   setTimeout(() => {
-      //     this.isShowTransition = false
-      //   })
-      // }
-      this.checkChange = false
     }
-    // divFocus () {
-    //   this.isShowTransition = !this.isShowTransition
-    //   if (this.isShowTransition) {
-    //     this.$refs.transitionDiv.focus()
-    //   }
-    // }
   }
 }
 </script>

@@ -103,3 +103,18 @@ export function monthSpliceDay (monthYear) {
     return [`${pointYear}-${pointMonth}-01`, `${pointYear}-${pointMonth}-${pointMonthLastDay}`]
   }
 }
+export function prevThreeMonth () {
+  var date = new Date()
+  var nowYear = date.getFullYear()
+  var nowMonth = date.getMonth() + 1
+  var nowDay = date.getDate()
+  var lastYear = nowYear
+  var lastMonth = nowMonth
+  lastMonth -= 2
+  if (nowMonth <= 0) {
+    lastYear -= 1
+    lastMonth += 10
+  }
+  var lastDay = new Date(lastYear, lastMonth, 0).getDate()
+  return [lastYear + '-' + lastMonth + '-' + lastDay, nowYear + '-' + nowMonth + '-' + nowDay]
+}
