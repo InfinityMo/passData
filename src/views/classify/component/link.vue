@@ -118,10 +118,14 @@ export default {
       })
     },
     filterData () {
+      this.PAGING.pageNum = 1
+      this.PAGING.pageSize = 10
       this.getTableData()
       this.isShowTransition = false
     },
     resetFilter () {
+      this.PAGING.pageNum = 1
+      this.PAGING.pageSize = 10
       this.checkList = []
       this.getTableData()
       this.isShowTransition = false

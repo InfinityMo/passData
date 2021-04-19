@@ -1,6 +1,7 @@
 <template>
   <div>
-    <vxe-table border
+    <vxe-table :key="randomKey"
+               border
                show-overflow
                row-key
                show-header-overflow
@@ -43,6 +44,7 @@ import {
   formatRowspanAndColspan
 } from './data'
 import compontentTable from '@/mixins/compontentTable2'
+import { createUUID } from '@/common/utils/funcStore'
 export default {
   mixins: [compontentTable],
   props: {
@@ -53,6 +55,7 @@ export default {
   },
   data () {
     return {
+      randomKey: createUUID(),
       columns: [],
       tableData: [],
       mergeCells: []
@@ -155,6 +158,7 @@ export default {
         const formatRow = formatRowspanAndColspan(this.tableData, item)
         this.formatMerge(formatRow, index, 1)
       })
+      this.randomKey = createUUID()
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
         this.$emit('tableRender', true)

@@ -149,7 +149,8 @@
             </div>
           </div>
           <Vtable @tableRender="tableRender"
-                  :form="submitForm" />
+                  :form="submitForm"
+                  :key="tableKey" />
         </div>
       </div>
     </div>
@@ -159,11 +160,13 @@
 import { mapGetters, mapMutations } from 'vuex'
 import tableMixin from '@/mixins/dealTable'
 import { getLastSevenDay } from '@/common/utils/timeCalc'
-import { scrollTo } from '@/common/utils/funcStore'
+import { scrollTo, createUUID } from '@/common/utils/funcStore'
 import watermark from '@/common/utils/watermark'
 import Vtable from '@/components/Vtable'
 import { searchForm, passageWayOption, dataTypeOption } from './formData'
+
 export default {
+  name: 'passageWay',
   mixins: [tableMixin],
   components: {
     // Table
@@ -191,7 +194,8 @@ export default {
       brandOptions: [],
       productOptions: [],
       linkSearchOption: [],
-      restaurants: []
+      restaurants: [],
+      tableKey: createUUID()
     }
   },
   computed: {
@@ -204,11 +208,22 @@ export default {
     this.searchForm.dateTime = getLastSevenDay()
     this.downForm = { ...this.searchForm }
   },
+
   mounted () {
     // 创建水印
     this.$nextTick(() => {
       watermark.set(`${this.userData.staffId}`)
     })
+  },
+  activated () {
+    // 监听进入了链接分类菜单
+    this.$bus.$on('classifyLeave', () => {
+      this.getSelectData()
+      this.tableKey = createUUID()
+    })
+  },
+  deactiveted () {
+
   },
   methods: {
     ...mapMutations({ SAVESHOPID: 'SAVESHOPID', SAVESHOPDATA: 'SAVESHOPDATA' }),

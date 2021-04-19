@@ -62,7 +62,8 @@
             </div>
           </div>
           <Vtable @tableRender="tableRender"
-                  :form="submitForm" />
+                  :form="submitForm"
+                  :key="tableKey" />
         </div>
       </div>
     </div>
@@ -72,11 +73,12 @@
 import { mapGetters, mapMutations } from 'vuex'
 import tableMixin from '@/mixins/dealTable'
 import { monthSpliceDay, prevThreeMonth } from '@/common/utils/timeCalc'
-import { scrollTo } from '@/common/utils/funcStore'
+import { scrollTo, createUUID } from '@/common/utils/funcStore'
 import watermark from '@/common/utils/watermark'
 import Vtable from '@/components/Vxtable'
 import { searchForm } from './formData'
 export default {
+  name: 'brand',
   mixins: [tableMixin],
   components: {
     // Table
@@ -93,7 +95,8 @@ export default {
       },
       downForm: {},
       // 品牌
-      brandOptions: []
+      brandOptions: [],
+      tableKey: createUUID()
     }
   },
   computed: {
@@ -105,6 +108,16 @@ export default {
     this.getSelectData()
     this.setMonthTime()
     // this.timeTypeChange(1)
+  },
+  activated () {
+    // 监听进入了链接分类菜单
+    this.$bus.$on('classifyLeave', () => {
+      this.getSelectData()
+      this.tableKey = createUUID()
+    })
+  },
+  deactiveted () {
+
   },
   mounted () {
     // 创建水印
@@ -149,7 +162,7 @@ export default {
         start: this.downForm.dateTime[0],
         end: this.downForm.dateTime[1]
       })
-      const src = `${process.env.VUE_APP_API}/groupdownload?brandId=${downForm.groupList}&start=${downForm.start}&end=${downForm.end}&shop=${downForm.shop}&type=0&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
+      const src = `${process.env.VUE_APP_API}/groupdownload?groupList=${downForm.groupList}&start=${downForm.start}&end=${downForm.end}&type=0&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
       location.href = src
     }
   }

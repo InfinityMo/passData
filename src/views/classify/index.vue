@@ -40,11 +40,9 @@ export default {
     }
   },
   methods: {
-    // tabClick (tab, event) {
-    //   this.currentTab = tab.name
-    //   debugger
-    //   // this.$router.push(`/${tab.name}`)
-    // }
+  },
+  beforeDestroy () {
+    this.$bus.$emit('classifyLeave')
   }
 }
 </script>

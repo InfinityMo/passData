@@ -22,10 +22,13 @@ import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 import '@/common/styles/common.less'
+import bus from './common/utils/bus'
 // 挂载请求
 Vue.prototype.$request = axios
 // 挂载防抖函数
 Vue.prototype.$debounce = debounce
+// 挂载事件总线
+Vue.prototype.$bus = bus
 Vue.use(ElementUI)
 
 Vue.use(VXETable)

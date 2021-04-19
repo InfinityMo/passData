@@ -158,11 +158,15 @@ export default {
       this.configDialogShow = false
     },
     filterData () {
+      this.PAGING.pageNum = 1
+      this.PAGING.pageSize = 10
       this.getTableData()
       this.isShowTransition = false
     },
     resetFilter () {
       this.checkList = []
+      this.PAGING.pageNum = 1
+      this.PAGING.pageSize = 10
       this.getTableData()
       this.isShowTransition = false
     },
@@ -179,9 +183,11 @@ export default {
       this.PAGING.pageSize = pageSize
       // 页数大小发生变化时，手动将当前页设置为1
       this.PAGING.pageNum = 1
+      this.getTableData()
     },
     handleCurrentChange (pageNum) {
       this.PAGING.pageNum = pageNum
+      this.getTableData()
     }
   }
 }

@@ -62,7 +62,8 @@
             </div>
           </div>
           <Vxetable @tableRender="tableRender"
-                    :form="submitForm" />
+                    :form="submitForm"
+                    :key="tableKey" />
         </div>
       </div>
     </div>
@@ -71,8 +72,8 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import tableMixin from '@/mixins/dealTable'
-import { prevThreeMonth } from '@/common/utils/timeCalc'
-import { scrollTo } from '@/common/utils/funcStore'
+import { monthSpliceDay, prevThreeMonth } from '@/common/utils/timeCalc'
+import { scrollTo, createUUID } from '@/common/utils/funcStore'
 import watermark from '@/common/utils/watermark'
 import Vxetable from '@/components/Vxetable'
 import { searchForm } from './formData'
@@ -92,7 +93,8 @@ export default {
       },
       downForm: {},
       // 品牌
-      brandOptions: []
+      brandOptions: [],
+      tableKey: createUUID()
     }
   },
   computed: {
@@ -104,6 +106,16 @@ export default {
     this.getSelectData()
     this.setMonthTime()
     // this.timeTypeChange(1)
+  },
+  activated () {
+    // 监听进入了链接分类菜单
+    this.$bus.$on('classifyLeave', () => {
+      this.getSelectData()
+      this.tableKey = createUUID()
+    })
+  },
+  deactiveted () {
+
   },
   mounted () {
     // 创建水印
@@ -120,8 +132,8 @@ export default {
     },
     searchHandle () {
       this.submitForm = { ...this.searchForm }
-      this.submitForm.start = this.searchForm.dateTime[0]
-      this.submitForm.end = this.searchForm.dateTime[1]
+      this.submitForm.start = monthSpliceDay(this.searchForm.dateTime[0])[0]
+      this.submitForm.end = monthSpliceDay(this.searchForm.dateTime[1])[1]
       this.downForm = { ...this.searchForm }
     },
     tableRender (flag) {
@@ -152,7 +164,7 @@ export default {
       //   downForm.startDate = monthSpliceDay(downForm.startDate)[0]
       //   downForm.endDate = monthSpliceDay(downForm.endDate)[1]
       // }
-      const src = `${process.env.VUE_APP_API}/groupdownload?brandId=${downForm.groupList}&start=${downForm.start}&end=${downForm.end}&shop=${downForm.shop}&type=1&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
+      const src = `${process.env.VUE_APP_API}/groupdownload?groupList=${downForm.groupList}&start=${downForm.start}&end=${downForm.end}&type=1&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
       location.href = src
     }
   }

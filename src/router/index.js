@@ -31,7 +31,7 @@ const routes = [
   {
     path: '/classify',
     name: 'classify',
-    meta: { title: '商品分析', keepAlive: true, isShowHead: true },
+    meta: { title: '商品分类', keepAlive: false, isShowHead: true },
     component: () => import('@/views/classify/index.vue')
   },
   // {
