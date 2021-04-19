@@ -70,7 +70,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import tableMixin from '@/mixins/dealTable'
 import { monthSpliceDay, prevThreeMonth } from '@/common/utils/timeCalc'
 import { scrollTo, createUUID } from '@/common/utils/funcStore'
@@ -124,7 +124,6 @@ export default {
     })
   },
   methods: {
-    ...mapMutations({ SAVESHOPID: 'SAVESHOPID', SAVESHOPDATA: 'SAVESHOPDATA' }),
     getSelectData () {
       Promise.all([this._getSelectData(1)]).then(res => {
         this.brandOptions = res[0]

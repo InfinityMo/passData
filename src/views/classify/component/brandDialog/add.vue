@@ -101,11 +101,11 @@ export default {
       this.$request.post('/brandcreate', submitParams).then(res => {
         if (res.errorCode === 1) {
           this.$message.success('保存成功')
-          this.addDialogClose(true)
+          this.addDialogClose('1')
           //  this.$message.error('')
         } else {
           this.$message.error('保存失败')
-          this.addDialogClose(false)
+          this.addDialogClose()
         }
       })
     },

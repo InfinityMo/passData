@@ -86,6 +86,7 @@ const mixins = {
               minYear = year - 1
               minMonth += 12
             }
+            // debugger
             const pickYear1 = new Date(`${maxYear}-${maxMonth}-${day}`).getTime()
             const pickYear2 = new Date(`${minYear}-${minMonth}-${day}`).getTime()
 

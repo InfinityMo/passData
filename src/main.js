@@ -11,7 +11,7 @@ import '@/common/styles/el-reset.less'
 import '@/common/styles/vxe-reset.less'
 import '@/common/styles/adapt.less'
 import '@/common/styles/icon-set.less'
-// import '@/common/utils/permission'
+import '@/common/utils/permission'
 
 import axios from './common/network/request'
 import '@/common/commonData/gobalComponents'

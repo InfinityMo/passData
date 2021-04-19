@@ -48,35 +48,14 @@ export default new Vuex.Store({
     SAVEPERMISSIONSCODE (state, payload) {
       state.permissionsCode = payload
     },
-    SAVEUSERPOWER (state, payload) {
-      state.userPower = payload
-    },
     SAVETRACKID (state, payload) {
       state.trackId = payload
     },
-    SAVESHOPID (state, payload) {
-      state.shopId = payload
-    },
-    SAVESHOPDATA (state, payload) {
-      state.shopData = []
-      state.shopData = payload
-    },
-    SAVEPKCHECKDATA (state, payload) {
-      state.pkCheckData = {}
-      state.pkCheckData = payload
-    },
-    // SAVETABLEDATAALL (state, payload) {
-    //   state.tableDataAll = []
-    //   state.tableDataAll = payload
-    // },
     RESETHEADERDATA (state) {
       state.trackId = ''
       state.permissionsCode = ''
       state.userData = {}
       state.permissionsCode = ''
-      state.userPower = []
-      state.shopId = ''
-      state.shopData = []
     }
   },
   // 配置异步提交状态
@@ -94,7 +73,6 @@ export default new Vuex.Store({
               staffId: data.userName
             }))
             commit('SAVEPERMISSIONSCODE', data.permissionsCode)
-            commit('SAVEUSERPOWER', data.permissions)
             resolve(true)
           } else if (res.errorCode === 1000) {
             Message.warning('用户名或密码有误，请核对用户名或密码')

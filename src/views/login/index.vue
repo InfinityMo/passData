@@ -86,7 +86,7 @@ export default {
         if (valid) {
           this.getUserInfo(loginData).then(res => {
             if (res) {
-              this.$router.push('./promot')
+              this.$router.push('./passageway')
             }
           })
         } else {

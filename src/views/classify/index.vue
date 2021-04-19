@@ -1,5 +1,5 @@
 <template>
-  <div class="page-wrap">
+  <div class="page-wrap page">
     <div class="title-select">
       <el-tabs v-model="tabActive"
                class="tabs-wrap">

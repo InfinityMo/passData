@@ -284,9 +284,9 @@ export default {
         timeout: 30000,
         headers: {
           'Content-Type': 'multipart/form-data',
-          trackId: this.$store.state.trackId || ''
-          // permissionsCode: this.$store.state.permissionsCode || '',
-          // user: this.$store.state.userData.staffId || ''
+          trackId: this.$store.state.trackId || '',
+          permissionsCode: this.$store.state.permissionsCode || '',
+          user: this.$store.state.userData.staffId || ''
         }
       }).then(res => {
         this.$store.commit('SETSPINNING', false)

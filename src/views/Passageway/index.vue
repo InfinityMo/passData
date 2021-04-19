@@ -157,7 +157,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import tableMixin from '@/mixins/dealTable'
 import { getLastSevenDay } from '@/common/utils/timeCalc'
 import { scrollTo, createUUID } from '@/common/utils/funcStore'
@@ -226,7 +226,6 @@ export default {
 
   },
   methods: {
-    ...mapMutations({ SAVESHOPID: 'SAVESHOPID', SAVESHOPDATA: 'SAVESHOPDATA' }),
     getSelectData () {
       // 0品牌 1单品 2链接
       // , this._getCascader(this.searchForm.level, 3)
@@ -269,18 +268,6 @@ export default {
         this.channelOptions = res
       })
     },
-    // querySearch (queryString, cb) {
-    //   const restaurants = this.restaurants
-    //   const results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
-    //   debugger
-    //   // 调用 callback 返回建议列表的数据
-    //   cb(results[0].la)
-    // },
-    // createFilter (queryString) {
-    //   return (restaurant) => {
-    //     return (restaurant.label.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)
-    //   }
-    // },
     // 下载报表
     downTable () {
       const downForm = Object.assign({}, {

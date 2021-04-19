@@ -99,8 +99,7 @@ export default {
       }).then(res => {
         if (res) {
           this.$message.success('保存成功')
-          this.editDialogClose(true)
-          //  this.$message.error('')
+          this.editDialogClose('1')
         } else {
           this.$message.error('保存失败')
           this.editDialogClose(false)

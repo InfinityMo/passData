@@ -38,8 +38,10 @@
                    :total="PAGING.total">
     </el-pagination>
     <Add :addDialogShow="addDialogShow"
+         v-if="addDialogShow"
          @addDialogClose="addDialogClose" />
     <AddGoods :addGoodsDialogShow="addGoodsDialogShow"
+              v-if="addGoodsDialogShow"
               :goodsId="goodsId"
               @addGoodsDialogClose="addGoodsDialogClose" />
     <Edit :editDialogShow="editDialogShow"
@@ -109,7 +111,7 @@ export default {
     },
     addDialogClose (flag) {
       this.addDialogShow = false
-      if (flag) {
+      if (flag === '1') {
         this.PAGING.pageNum = 1
         this.getTableData()
       }
@@ -119,7 +121,7 @@ export default {
     },
     editDialogClose (flag) {
       this.editDialogShow = false
-      if (flag) {
+      if (flag === '1') {
         this.getTableData()
       }
     },
@@ -145,9 +147,11 @@ export default {
       this.PAGING.pageSize = pageSize
       // 页数大小发生变化时，手动将当前页设置为1
       this.PAGING.pageNum = 1
+      this.getTableData()
     },
     handleCurrentChange (pageNum) {
       this.PAGING.pageNum = pageNum
+      this.getTableData()
     }
   }
 }

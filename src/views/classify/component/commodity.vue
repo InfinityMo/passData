@@ -150,7 +150,7 @@ export default {
     },
     editDialogClose (flag) {
       this.editDialogShow = false
-      if (flag) {
+      if (flag === '1') {
         this.getTableData()
       }
     },
