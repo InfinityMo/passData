@@ -3,7 +3,7 @@
     <div class="flex-between-center table-title-wrap">
       <h4 class="table-title">品牌数据</h4>
       <el-button type="primary"
-                 @click="addBrand">新增品牌</el-button>
+                 @click="addBrand"><i class="addbtn-icon"></i><span class="add-btn">新增品牌</span></el-button>
     </div>
     <el-table :data="tableData"
               class="cutomer-table auto-cus-table">

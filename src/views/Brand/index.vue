@@ -142,7 +142,7 @@ export default {
         this.$store.commit('SETSPINNING', false)
         if (flag) {
           setTimeout(() => {
-            scrollTo(screen.height < 1080 ? 140 : 120)
+            scrollTo(60)
           }, 500)
         }
       })

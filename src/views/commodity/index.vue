@@ -11,7 +11,8 @@
             <el-col :span="8">
               <el-form-item label="商品选择："
                             prop="groupList">
-                <el-select placeholder="请选择商品"
+                <el-select class="over-select"
+                           placeholder="请选择商品"
                            multiple
                            collapse-tags
                            popper-class="reset-select"
@@ -140,7 +141,7 @@ export default {
         this.$store.commit('SETSPINNING', false)
         if (flag) {
           setTimeout(() => {
-            scrollTo(screen.height < 1080 ? 140 : 120)
+            scrollTo(60)
           }, 500)
         }
       })

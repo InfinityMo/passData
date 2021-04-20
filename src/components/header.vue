@@ -2,7 +2,7 @@
   <div>
     <div class="head">
       <div class="head-content flex-between-center">
-        <h4>联恩通道流量查询系统</h4>
+        <h4>联恩分销流量分析平台</h4>
         <!-- 用户信息 -->
         <div class="flex-item-center user">
           <el-tabs v-model="tabActive"
@@ -261,7 +261,7 @@ export default {
         return false
       }
       const fileSize = file.size / 1024 / 1024
-      if (fileSize > 5) {
+      if (fileSize > 15) {
         this.$message.warning('文件上传过大,请检查文件')
         return false
       }

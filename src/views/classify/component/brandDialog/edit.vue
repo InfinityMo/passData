@@ -6,7 +6,7 @@
                :close-on-click-modal="false"
                :destroy-on-close="true"
                :before-close="editDialogClose"
-               width="432px">
+               width="460px">
       <el-form :model="editForm"
                label-width="82px"
                ref="dynamicForm">

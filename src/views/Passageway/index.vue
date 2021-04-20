@@ -26,7 +26,8 @@
             <el-col :span="8">
               <el-form-item label="通道选择："
                             prop="channelList">
-                <el-cascader placeholder="请选择通道"
+                <el-cascader class="over-cascader"
+                             placeholder="请选择通道"
                              v-model="searchForm.channelList"
                              :options="channelOptions"
                              :props="{ multiple: true }"
@@ -70,7 +71,8 @@
             <el-col :span="8">
               <el-form-item label="商品选择："
                             prop="itemList">
-                <el-select placeholder="请选择商品"
+                <el-select class="over-select"
+                           placeholder="请选择商品"
                            multiple
                            collapse-tags
                            popper-class="reset-select"
@@ -233,7 +235,7 @@ export default {
         if (flag) {
           setTimeout(() => {
             // const top = document.body.scrollTop || document.documentElement.scrollTop
-            scrollTo(screen.height < 1080 ? 140 : 120)
+            scrollTo(screen.height < 1080 ? 125 : 90)
           }, 500)
         }
       })

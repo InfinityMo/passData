@@ -528,3 +528,46 @@
     border-bottom: 1px solid #eee;
   }
 }
+
+// select 文字过长
+.over-select {
+  .el-tag {
+    max-width: calc(100% - 65px);
+    display: inline-block;
+  }
+
+  .el-tag__close.el-icon-close {
+    top: -6px;
+  }
+
+  .el-select__tags-text {
+    display: inline-block;
+    min-width: 35px;
+    max-width: calc(100% - 35px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.over-cascader {
+  .el-cascader__tags {
+    .el-tag {
+      max-width: calc(100% - 65px);
+      display: inline-block;
+
+      span {
+        display: inline-block;
+        min-width: 35px;
+        max-width: calc(100% - 35px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .el-tag__close.el-icon-close {
+        top: -6px;
+      }
+    }
+  }
+}

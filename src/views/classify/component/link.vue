@@ -6,12 +6,12 @@
     <el-table :data="tableData"
               class="cutomer-table auto-cus-table">
       <el-table-column label="链接名称"
-                       width="400"
                        :show-overflow-tooltip="true"
                        prop="linkName">
       </el-table-column>
       <el-table-column label="状态"
-                       prop="isClassify">
+                       prop="isClassify"
+                       width="160">
         <template slot="header"
                   slot-scope="scope">
           <div class="check-column">
@@ -50,11 +50,11 @@
         </template>
       </el-table-column>
       <el-table-column label="品牌"
-                       prop="brandName">
+                       prop="brandName"
+                       width="220">
       </el-table-column>
       <el-table-column label="商品"
                        prop="productName"
-                       width="490"
                        :show-overflow-tooltip="true">
       </el-table-column>
     </el-table>
