@@ -9,9 +9,9 @@
                    ref="searchForm"
                    label-width="90px">
             <el-col :span="8">
-              <el-form-item label="产品选择："
+              <el-form-item label="商品选择："
                             prop="groupList">
-                <el-select placeholder="请选择产品"
+                <el-select placeholder="请选择商品"
                            multiple
                            collapse-tags
                            popper-class="reset-select"
@@ -156,13 +156,9 @@ export default {
       const downForm = Object.assign({}, {
         ...this.downForm,
         groupList: this.downForm.groupList ? this.downForm.groupList.join(',') : '',
-        start: this.downForm.dateTime[0],
-        end: this.downForm.dateTime[1]
+        start: monthSpliceDay(this.downForm.dateTime[0])[0],
+        end: monthSpliceDay(this.downForm.dateTime[1])[1]
       })
-      // if (downForm.timeType === 7) {
-      //   downForm.startDate = monthSpliceDay(downForm.startDate)[0]
-      //   downForm.endDate = monthSpliceDay(downForm.endDate)[1]
-      // }
       const src = `${process.env.VUE_APP_API}/groupdownload?groupList=${downForm.groupList}&start=${downForm.start}&end=${downForm.end}&type=1&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
       location.href = src
     }

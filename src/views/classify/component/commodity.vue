@@ -4,7 +4,7 @@
       <h4 class="table-title">商品数据</h4>
     </div>
     <el-table :data="tableData"
-              class="cutomer-table">
+              class="cutomer-table auto-cus-table">
       <el-table-column label="商品名称"
                        width="700"
                        :show-overflow-tooltip="true"
@@ -16,7 +16,9 @@
                   slot-scope="scope">
           <div class="check-column">
             <span class="status"
-                  @click="toggleIcon">品牌<i class="arrow-down-icon"></i></span>
+                  @click="toggleIcon"
+                  v-if="checkListArr.length>0">品牌<i class="arrow-down-icon"></i></span>
+            <span v-else>品牌</span>
             <transition name="el-zoom-in-top">
               <div v-show="isShowTransition"
                    class="transition">
@@ -79,7 +81,6 @@
 </template>
 <script>
 import linkMixin from '@/mixins/link'
-import { commodityData } from './data'
 import Edit from '../component/commodityDialog/edit'
 import ConfigLink from '../component/commodityDialog/configLink'
 export default {
@@ -90,7 +91,7 @@ export default {
   mixins: [linkMixin],
   data () {
     return {
-      tableData: commodityData,
+      tableData: [],
       isShowTransition: false,
       editDialogShow: false,
       configDialogShow: false,

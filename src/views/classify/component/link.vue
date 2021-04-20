@@ -4,7 +4,7 @@
       <h4 class="table-title">链接数据</h4>
     </div>
     <el-table :data="tableData"
-              class="cutomer-table">
+              class="cutomer-table auto-cus-table">
       <el-table-column label="链接名称"
                        width="400"
                        :show-overflow-tooltip="true"

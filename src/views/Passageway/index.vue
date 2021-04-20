@@ -100,15 +100,6 @@
             <el-col :span="8">
               <el-form-item label="链接名称/Id："
                             prop="linkList">
-                <!-- <el-select v-model="searchForm.linkList"
-                           filterable
-                           placeholder="请输入链接名称或Id">
-                  <el-option v-for="item in restaurants"
-                             :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select> -->
                 <el-select v-model="searchForm.linkList"
                            filterable
                            remote
@@ -120,11 +111,6 @@
                              :value="item.value">
                   </el-option>
                 </el-select>
-                <!-- <el-autocomplete v-model="searchForm.linkList"
-                                 :trigger-on-focus="false"
-                                 :fetch-suggestions="querySearch"
-                                 placeholder="请输入链接名称或Id">
-                                 </el-autocomplete> -->
               </el-form-item>
             </el-col>
             <el-col :span="8"

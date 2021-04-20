@@ -158,8 +158,8 @@ export default {
       const downForm = Object.assign({}, {
         ...this.downForm,
         groupList: this.downForm.groupList ? this.downForm.groupList.join(',') : '',
-        start: this.downForm.dateTime[0],
-        end: this.downForm.dateTime[1]
+        start: monthSpliceDay(this.downForm.dateTime[0])[0],
+        end: monthSpliceDay(this.downForm.dateTime[1])[1]
       })
       const src = `${process.env.VUE_APP_API}/groupdownload?groupList=${downForm.groupList}&start=${downForm.start}&end=${downForm.end}&type=0&trackId=${this.$store.state.trackId || ''}&permissionsCode=${this.$store.state.permissionsCode || ''}&user=${this.userData.staffId || ''}`
       location.href = src

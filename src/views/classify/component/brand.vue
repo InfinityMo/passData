@@ -6,7 +6,7 @@
                  @click="addBrand">新增品牌</el-button>
     </div>
     <el-table :data="tableData"
-              class="cutomer-table">
+              class="cutomer-table auto-cus-table">
       <el-table-column label="品牌"
                        prop="brandName">
       </el-table-column>
