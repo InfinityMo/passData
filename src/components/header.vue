@@ -83,7 +83,7 @@
                :close-on-click-modal="false"
                :destroy-on-close="true"
                @close="editPwdClose"
-               width="452px">
+               width="470px">
       <el-form :model="editForm"
                :rules="editRules"
                label-width="96px"
