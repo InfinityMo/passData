@@ -27,6 +27,10 @@
 import Link from './component/link'
 import Brand from './component/brand'
 import Commodity from './component/commodity'
+// import {
+//   // mapGetters,
+//   // mapMutations
+// } from 'vuex'
 export default {
   components: {
     Link,
@@ -39,10 +43,15 @@ export default {
       tabActive: 'Link'
     }
   },
+  created () {
+    this.$bus.$emit('classifyLeave')
+    // this.setEnterFlag(true)
+  },
   methods: {
+    // ...mapMutations({ SETENTERCLASSIFYFLAG: 'setEnterFlag' })
   },
   beforeDestroy () {
-    this.$bus.$emit('classifyLeave')
+    this.$bus.$off('classifyLeave')
   }
 }
 </script>

@@ -16,7 +16,8 @@
           <el-form-item label="商品名称："
                         :ref="'dynamicForm.' + index + '.productName'"
                         :prop="'dynamicForm.' + index + '.productName'"
-                        :rules="{required: true, message: '商品不能为空', trigger: 'blur'}"
+                        :rules="[{required: true, message: '商品不能为空', trigger: 'blur'},
+                        { pattern: /^\S(.*\S)?$/, message: '请输入正确的商品名称', trigger: 'blur' }]"
                         class="form-item">
             <el-input placeholder="请输入商品名称"
                       v-model="dynamicItem.productName"

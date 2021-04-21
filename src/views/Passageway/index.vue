@@ -183,7 +183,8 @@ export default {
       productOptions: [],
       linkSearchOption: [],
       restaurants: [],
-      tableKey: createUUID()
+      tableKey: createUUID(),
+      classifyEnter: false
     }
   },
   computed: {
@@ -207,8 +208,12 @@ export default {
     // 监听进入了链接分类菜单
     this.$bus.$on('classifyLeave', () => {
       this.getSelectData()
-      this.tableKey = createUUID()
+      this.classifyEnter = true
     })
+    if (this.classifyEnter) {
+      this.tableKey = createUUID()
+      this.classifyEnter = false
+    }
   },
   deactiveted () {
 
@@ -216,7 +221,7 @@ export default {
   methods: {
     getSelectData () {
       // 0品牌 1单品 2链接
-      // , this._getCascader(this.searchForm.level, 3)
+      // this._getCascader(this.searchForm.level, 3)
       Promise.all([this._getSelectData(0), this._getSelectData(1), this._getSelectData(2), this._getCascader(this.searchForm.level, 3)]).then(res => {
         this.brandOptions = res[0]
         this.productOptions = res[1]
@@ -228,6 +233,7 @@ export default {
       this.submitForm = { ...this.searchForm }
       this.downForm = {}
       this.downForm = { ...this.searchForm }
+      this.tableKey = createUUID()
     },
     tableRender (flag) {
       this.$nextTick(() => {

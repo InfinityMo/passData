@@ -12,7 +12,8 @@
                ref="dynamicForm">
         <el-form-item label="商品名称："
                       prop="productName"
-                      :rules="{required: true, message: '商品名称不能为空', trigger: 'blur'}"
+                      :rules="[{required: true, message: '商品名称不能为空', trigger: 'blur'},
+                      { pattern: /^\S(.*\S)?$/, message: '请输入正确的商品名称', trigger: 'blur' }]"
                       class="form-item">
           <el-input placeholder="请输入商品名称"
                     v-model="editForm.productName"
@@ -76,6 +77,9 @@ export default {
       this._getSelectData(0).then(res => {
         if (res) {
           this.brandOption = res
+          if (this.editForm.brandId === -1) {
+            this.editForm.brandId = this.brandOption[0].value
+          }
         }
       })
     },

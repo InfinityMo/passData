@@ -13,10 +13,7 @@ export default new Vuex.Store({
     userData: {},
     trackId: '',
     permissionsCode: '',
-    userPower: [],
-    shopId: '',
-    shopData: [],
-    pkCheckData: {}
+    enterClassifyFlag: false
     // tableDataAll: []
   },
   getters: {
@@ -28,9 +25,7 @@ export default new Vuex.Store({
       }
       return state.userData || {}
     },
-    getUserPower: state => state.userPower,
-    getShopData: state => state.shopData,
-    getPkCheckData: state => state.pkCheckData
+    getEnterClassifyFlag: state => state.enterClassifyFlag
     // getTableAllData: state => state.tableDataAll
   },
   mutations: {
@@ -50,6 +45,9 @@ export default new Vuex.Store({
     },
     SAVETRACKID (state, payload) {
       state.trackId = payload
+    },
+    SETENTERCLASSIFYFLAG (state, payload) {
+      state.enterClassifyFlag = payload
     },
     RESETHEADERDATA (state) {
       state.trackId = ''
@@ -96,7 +94,7 @@ export default new Vuex.Store({
       name: 'promot',
       local: false,
       session: {
-        list: ['trackId', 'permissionsCode', 'userPower']
+        list: ['trackId', 'permissionsCode']
       }
     })
   ]

@@ -96,7 +96,8 @@ export default {
       downForm: {},
       // 品牌
       brandOptions: [],
-      tableKey: createUUID()
+      tableKey: createUUID(),
+      classifyEnter: false
     }
   },
   computed: {
@@ -113,8 +114,12 @@ export default {
     // 监听进入了链接分类菜单
     this.$bus.$on('classifyLeave', () => {
       this.getSelectData()
-      this.tableKey = createUUID()
+      this.classifyEnter = true
     })
+    if (this.classifyEnter) {
+      this.tableKey = createUUID()
+      this.classifyEnter = false
+    }
   },
   deactiveted () {
 
@@ -136,6 +141,7 @@ export default {
       this.submitForm.start = monthSpliceDay(this.searchForm.dateTime[0])[0]
       this.submitForm.end = monthSpliceDay(this.searchForm.dateTime[1])[1]
       this.downForm = { ...this.searchForm }
+      this.tableKey = createUUID()
     },
     tableRender (flag) {
       this.$nextTick(() => {

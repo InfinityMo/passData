@@ -109,7 +109,6 @@ export default {
       })
     },
     setColumn (column) {
-      // debugger
       column.forEach(item => {
         this.columns.push({
           fieldName: item.key,
@@ -161,9 +160,9 @@ export default {
       this.randomKey = createUUID()
       this.$nextTick(() => {
         this.$refs.xTable.reloadData(this.tableData)
+        this.$refs.xTable.recalculate(true)
         this.$emit('tableRender', true)
       })
-      //
     },
     // 合并当前第1列，合并1列
     formatMerge (formatRow, col = 0, colspan = 1) {

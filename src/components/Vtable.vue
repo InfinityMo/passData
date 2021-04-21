@@ -54,7 +54,6 @@
                :auto-resize="true"
                :merge-cells="mergeCells"
                :footer-method="tableSummaries"
-               keep-source
                :show-footer="this.tableData.length>0"
                ref="xTable"
                :max-height="calcHeight()">
